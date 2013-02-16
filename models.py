@@ -4,10 +4,10 @@ from django.db.models import signals
 
 
 class AccessToken(models.Model):
-    user = models.ForiegnKeyField(settings.AUTH_USER_MODEL, related_name="access_tokens")
-    client = models.ForeignKeyField("Client", related_name="access_tokens")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="access_tokens")
+    client = models.ForeignKey("Client", related_name="access_tokens")
     
-    refresh_token = models.ForeignKeyField("RefreshToken", related_name="access_tokens")
+    refresh_token = models.ForeignKey("RefreshToken", related_name="access_tokens")
     token = models.CharField(max_length=100)
     scope = models.ManyToManyField("Scope", related_name="access_tokens")
     
@@ -17,8 +17,8 @@ class AccessToken(models.Model):
 
 
 class AuthorizationToken(models.Model):
-    user = models.ForiegnKeyField(settings.AUTH_USER_MODEL, related_name="authorization_tokens")
-    client = models.ForeignKeyField("Client", related_name="authorization_tokens")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="authorization_tokens")
+    client = models.ForeignKey("Client", related_name="authorization_tokens")
     token = models.CharField(max_length=100)
     scope = models.ManyToManyField("Scope", related_name="authorization_tokens")
     
@@ -40,11 +40,11 @@ class RedirectUri(models.Model):
 
 
 class RefreshToken(models.Model):
-    user = models.ForiegnKeyField(settings.AUTH_USER_MODEL, related_name="refresh_tokens")
-    client = models.ForeignKeyField("Client", related_name="refresh_tokens")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="refresh_tokens")
+    client = models.ForeignKey("Client", related_name="refresh_tokens")
     
     authorization_token = models.OneToOneField("AuthorizationToken", related_name="refresh_token")
-    token = modls.CharField(max_length=100)
+    token = models.CharField(max_length=100)
     scope = models.ManyToManyField("Scope", related_name="refresh_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
