@@ -17,6 +17,18 @@ class AccessToken(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class AuthorizationCode(models.Model):
+    client = models.ForeignKey("Client", related_name="authorization_codes")
+    scope = models.ManyToManyField("Scope", related_name="authorization_codes")
+    redirect_uri = models.ForeignKey("RedirectUri", related_name="authorization_codes")
+    
+    token = models.CharField(max_length=100)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+
 class AuthorizationToken(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="authorization_tokens")
     client = models.ForeignKey("Client", related_name="authorization_tokens")
