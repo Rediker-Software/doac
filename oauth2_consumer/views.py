@@ -226,6 +226,11 @@ class TokenView(OAuthView):
     http_method_names = ("get", )
     
     def get(self, request, *args, **kwargs):
+        grant_type = request.GET.get("grant_type", None)
+        
+        if not grant_type == "authorization_code":
+            return self.render_exception(e)
+        
         try:
             self.client_id = request.GET.get("client_id", None)
             self.verify_client_id()
@@ -233,11 +238,39 @@ class TokenView(OAuthView):
             return self.render_exception(e)
         
         if request.GET.has_key("code"):
-            pass
+            try:
+                self.code = request.GET.get("code", None)
+                self.verify_code()
+            except:
+                raise
+            
+            self.refresh_token = self.authorization_token.generate_refresh_token()
+            
+            if self.refresh_token:
+                return self.render_refresh_token()
+            else:
+                raise
+            
         elif request.GET.has_key("refresh_token"):
             pass
         else:
             return self.render_exception(e)
+    
+    def render_refresh_token(self):
+        from .http import JsonResponse
+        
+        return JsonResponse({"refresh_token": self.refresh_token.token})
+    
+    def verify_code(self):
+        from .models import AuthorizationToken
+        
+        if self.code:
+            try:
+                self.authorization_token = AuthorizationToken.objects.get(client=self.client, token=self.code)
+            except AuthorizationToken.DoesNotExist:
+                raise
+        else:
+            raise
 
 
 def redirect_endpoint(request):
