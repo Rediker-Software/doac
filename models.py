@@ -37,7 +37,7 @@ class AuthorizationCode(models.Model):
         import datetime
         
         self.token = self.generate_token()
-        self.expires_at = datetime.datetime.now()
+        self.expires_at = datetime.datetime.now() + datetime.timedelta(hours=1)
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
