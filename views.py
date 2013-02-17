@@ -65,6 +65,29 @@ class AuthorizeView(OAuthView):
             self.verify_uri()
         except exceptions.InvalidRequest as e:
             return self.render_exception(e)
+        
+        try:
+            self.scope = request.GET.get("scope", None)
+            self.verify_scope()
+        except exceptions.InvalidScope as e:
+            return self.render_exception(e)
+    
+    def verify_scope(self):
+        from .models import Scope
+        
+        if self.scope:
+            scopes = self.scope.split(",")
+            self.scopes = []
+            
+            for scope_name in scopes:
+                try:
+                    scope = Scope.objects.get(short_name=scope_name)
+                except Scope.DoesNotExist:
+                    raise exceptions.ScopeNotValid()
+                
+                self.scopes.append(scope)
+        else:
+            raise exceptions.ScopeNotDefined()
 
 
 def redirect_endpoint(request):
