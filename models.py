@@ -27,6 +27,19 @@ class AuthorizationCode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(blank=True)
     is_active = models.BooleanField(default=True)
+    
+    def generate_token(self):
+        from django.utils.crypto import get_random_string
+        
+        return get_random_string(100)
+        
+    def save(self, *args, **kwargs):
+        import datetime
+        
+        self.token = self.generate_token()
+        self.expires_at = datetime.datetime.now()
+        
+        super(AuthorizationCode, self).save(*args, **kwargs)
 
 
 class AuthorizationToken(models.Model):
