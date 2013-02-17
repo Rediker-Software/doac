@@ -88,6 +88,12 @@ class AuthorizationToken(models.Model):
         from django.utils.crypto import get_random_string
         
         return get_random_string(100)
+    
+    def revoke_tokens(self):
+        self.is_active = False
+        self.save()
+        
+        self.refresh_token.revoke_tokens()
         
     def save(self, *args, **kwargs):
         from django.utils import timezone
@@ -151,7 +157,14 @@ class RefreshToken(models.Model):
         from django.utils.crypto import get_random_string
         
         return get_random_string(100)
+    
+    def revoke_tokens(self):
+        self.is_active = False
+        self.save()
         
+        for access_token in self.access_tokens.all():
+            access_token.revoke()
+    
     def save(self, *args, **kwargs):
         from django.utils import timezone
         import datetime
