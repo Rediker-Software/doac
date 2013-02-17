@@ -13,7 +13,7 @@ class AccessToken(models.Model):
     scope = models.ManyToManyField("Scope", related_name="access_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(blank=True)
+    expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
 
@@ -25,7 +25,7 @@ class AuthorizationCode(models.Model):
     token = models.CharField(max_length=100)
     
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(blank=True)
+    expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
     
     def __unicode__(self):
@@ -53,8 +53,25 @@ class AuthorizationToken(models.Model):
     scope = models.ManyToManyField("Scope", related_name="authorization_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(blank=True)
+    expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    
+    def __unicode__(self):
+        return self.token
+    
+    def generate_token(self):
+        from django.utils.crypto import get_random_string
+        
+        return get_random_string(100)
+        
+    def save(self, *args, **kwargs):
+        from django.utils import timezone
+        import datetime
+        
+        self.token = self.generate_token()
+        self.expires_at = timezone.now() + datetime.timedelta(hours=1)
+        
+        super(AuthorizationToken, self).save(*args, **kwargs)
 
 
 class Client(models.Model):
@@ -97,7 +114,7 @@ class RefreshToken(models.Model):
     scope = models.ManyToManyField("Scope", related_name="refresh_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(blank=True)
+    expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
 
