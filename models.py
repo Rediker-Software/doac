@@ -34,10 +34,11 @@ class AuthorizationCode(models.Model):
         return get_random_string(100)
         
     def save(self, *args, **kwargs):
+        from django.utils import timezone
         import datetime
         
         self.token = self.generate_token()
-        self.expires_at = datetime.datetime.now() + datetime.timedelta(hours=1)
+        self.expires_at = timezone.now() + datetime.timedelta(hours=1)
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
