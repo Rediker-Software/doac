@@ -43,3 +43,11 @@ class ResponseTypeNotValid(Exception):
     error = "unsupported_response_type"
     http = HttpResponseUnauthorized
     reason = "The request type was malformed or invalid."
+
+
+class AuthorizationCodeNotProvided(InvalidRequest):
+    reason = "The authorization code was malformed or invalid."
+
+
+class AuthorizationCodeNotValid(InvalidRequest):
+    reason = "The authorization code was malformed or invalid."
