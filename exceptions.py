@@ -24,3 +24,12 @@ class RedirectUriDoesNotValidate(InvalidRequest):
 
 class InvalidScope(Exception):
     error = "invalid_scope"
+    http = HttpResponseUnauthorized
+
+
+class ScopeNotDefined(InvalidScope):
+    reason = "The scope was malformed or invalid."
+
+
+class ScopeNotValid(InvalidScope):
+    reason = "The scope contained values which were incorrect."
