@@ -40,7 +40,9 @@ class AuthorizationCode(models.Model):
         from django.utils import timezone
         import datetime
         
-        self.token = self.generate_token()
+        if not self.token:
+            self.token = self.generate_token()
+        
         self.expires_at = timezone.now() + datetime.timedelta(hours=1)
         
         super(AuthorizationCode, self).save(*args, **kwargs)
@@ -91,7 +93,9 @@ class AuthorizationToken(models.Model):
         from django.utils import timezone
         import datetime
         
-        self.token = self.generate_token()
+        if not self.token:
+            self.token = self.generate_token()
+        
         self.expires_at = timezone.now() + datetime.timedelta(hours=1)
         
         super(AuthorizationToken, self).save(*args, **kwargs)
@@ -152,7 +156,9 @@ class RefreshToken(models.Model):
         from django.utils import timezone
         import datetime
         
-        self.token = self.generate_token()
+        if not self.token:
+            self.token = self.generate_token()
+        
         self.expires_at = timezone.now() + datetime.timedelta(hours=1)
         
         super(RefreshToken, self).save(*args, **kwargs)
