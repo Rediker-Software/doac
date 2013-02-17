@@ -29,9 +29,24 @@ class OAuthView(View):
             raise exceptions.ClientNotProvided()
         
     def verify_uri(self):
-        from urlparse import urlsplit
+        from urlparse import urlparse
+            
+        PARSE_MATCH_ATTRIBUTES = ("scheme", "hostname", "port", )
         
-        pass
+        if self.redirect_uri:
+            client_host = self.client.access_host
+            client_parse = urlparse(client_host)
+            
+            redirect_parse = urlparse(self.redirect_uri)
+            
+            for attribute in PARSE_MATCH_ATTRIBUTES:
+                client_attribute = getattr(client_parse, attribute)
+                redirect_attribute = getattr(redirect_parse, attribute)
+                
+                if not client_attribute == redirect_attribute:
+                    raise exceptions.RedirectUriDoesNotValidate()
+        else:
+            raise exceptions.RedirectUriNotProvided()
 
 
 class AuthorizeView(OAuthView):
@@ -45,11 +60,11 @@ class AuthorizeView(OAuthView):
         except exceptions.InvalidRequest as e:
             return self.render_exception(e)
         
-        if self.check_get_parameters("client_id", "redirect_uri", "scope", "response_type"):
-            return HttpResponse()
-        else:
-            if request.GET.has_key(""):
-                pass
+        try:
+            self.redirect_uri = request.GET.get("redirect_uri", None)
+            self.verify_uri()
+        except exceptions.InvalidRequest as e:
+            return self.render_exception(e)
 
 
 def redirect_endpoint(request):
