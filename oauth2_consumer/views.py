@@ -257,9 +257,17 @@ class TokenView(OAuthView):
             return self.render_exception(e)
     
     def render_refresh_token(self):
+        from django.utils import timezone
         from .http import JsonResponse
         
-        return JsonResponse({"refresh_token": self.refresh_token.token})
+        remaining = self.refresh_token.expires_at - timezone.now()
+        
+        response = {}
+        response["refresh_token"] = self.refresh_token.token
+        response["token_type"] = "bearer"
+        response["expires_in"] = int(remaining.total_seconds())
+        
+        return JsonResponse(response)
     
     def verify_code(self):
         from .models import AuthorizationToken
