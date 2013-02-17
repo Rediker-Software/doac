@@ -11,7 +11,7 @@
 {% endfor %}
 </ul>
 
-<form action="{% url "oauth2_approval" %}" method="POST">
+<form action="{% url "oauth2_approval" %}?state={{ state }}" method="POST">
     {% csrf_token %}
     
     <input type="hidden" name="code" value="{{ authorization_code }}" />
