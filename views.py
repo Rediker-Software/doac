@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.generic import View
 from . import exceptions
+from . import utils
 
 
 ALLOWED_RESPONSE_TYPES = ("code", "token", )
@@ -66,11 +67,83 @@ class OAuthView(View):
             raise exceptions.RedirectUriNotProvided()
 
 
+class ApprovalView(OAuthView):
+    
+    http_method_names = ("post", )
+    
+    def post(self, request, *args, **kwargs):
+        utils.prune_old_authorization_codes()
+        
+        try:
+            self.authorization_code = request.POST.get("code", None)
+            self.verify_authorization_code()
+        except exceptions.InvalidRequest as e:
+            return self.render_exception(e)
+        
+        self.client = self.authorization_code.client
+        self.redirect_uri = self.authorization_code.redirect_uri
+        self.scopes = self.authorization_code.scope.all()
+        self.state = request.POST.get("code_state", None)
+        
+        if request.POST.has_key("deny_access"):
+            return self.authorization_denied()
+        else:
+            return self.authorization_accepted()
+    
+    
+    def authorization_accepted(self):
+        from django.http import HttpResponseRedirect
+        from .models import AuthorizationToken
+        
+        self.authorization_token = AuthorizationToken(user=self.request.user, client=self.client)
+        self.authorization_token.save()
+        
+        self.authorization_token.scope = self.scopes
+        self.authorization_token.save()
+        
+        query_string = self.generate_query_string()
+        
+        return HttpResponseRedirect(self.redirect_uri.url + "?" + query_string)
+        
+    
+    def authorization_denied(self):
+        return self.redirect_exception(exceptions.AuthorizationDenied())
+    
+    
+    def generate_query_string(self):
+        from django.http import QueryDict
+        
+        query = QueryDict("").copy()
+        query["code"] = self.authorization_token.token
+        query["state"] = self.state
+        
+        return query.urlencode()
+    
+    
+    def verify_authorization_code(self):
+        from .models import AuthorizationCode
+        
+        if self.authorization_code:
+            get_code = self.request.GET.get("code", None)
+            
+            if not get_code == self.authorization_code:
+                raise exceptions.AuthorizationCodeNotValid()
+            
+            try:
+                self.authorization_code = AuthorizationCode.objects.get(token=self.authorization_code)
+            except AuthorizationCode.DoesNotExist:
+                raise exceptions.AuthorizationCodeNotValid()
+        else:
+            raise exceptions.AuthorizationCodeNotProvided()
+
+
 class AuthorizeView(OAuthView):
     
     http_method_names = ("get", "post", )
     
     def get(self, request, *args, **kwargs):
+        utils.prune_old_authorization_codes()
+        
         try:
             self.client_id = request.GET.get("client_id", None)
             self.verify_client()
