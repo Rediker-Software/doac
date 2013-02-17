@@ -249,7 +249,7 @@ class TokenView(OAuthView):
             if self.refresh_token:
                 return self.render_refresh_token()
             else:
-                raise
+                self.authorization_token.revoke_tokens()
             
         elif request.GET.has_key("refresh_token"):
             pass
@@ -267,6 +267,11 @@ class TokenView(OAuthView):
         if self.code:
             try:
                 self.authorization_token = AuthorizationToken.objects.get(client=self.client, token=self.code)
+                
+                if not self.authorization_token.is_active:
+                    self.authorization_token.revoke_tokens()
+                    
+                    raise
             except AuthorizationToken.DoesNotExist:
                 raise
         else:
