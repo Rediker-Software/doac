@@ -36,6 +36,5 @@ nosetests.xml
 tmp
 
 # Unrelated Django files
-settings.py
-wsgi.py
-db
+website
+manage.py
