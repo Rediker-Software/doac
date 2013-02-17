@@ -6,8 +6,9 @@ Django OAuth2 Consumer comes with multiple models and utility functions which ca
 
 Models
 ~~~~~~
+.. module:: oauth2_consumer.models
 
-.. class:: oauth2_consumer.models.Client
+.. class:: Client
    
    A single client that can be used when requesting an authorization.
    
@@ -34,3 +35,31 @@ Models
    .. method:: save(*args, **kwargs)
       
       Saves the client to the database.  A secret is automatically generated for the client and can be retrieved using :attr:`secret`.  Any time a client is changed, a new secret is generated for it.
+
+.. class:: RedirectUri
+   
+   The url that a user can be redirected to during the authorization process.
+   
+   .. attribute:: client
+      
+      The client that the url is tied to.  It must be under the :attr:`~Client.access_host` of the :class:`Client` in order to be used.
+   
+   .. attribute:: url
+      
+      The url that can be used.  It must be exactly the same when starting the authorization process.
+
+.. class:: Scope
+   
+   A scope that can be requested by a client as a permission.
+   
+   .. attribute:: short_name
+      
+      The name of the scope that is used when a client is requesting a set of scopes to be authorized for.
+   
+   .. attribute:: full_name
+      
+      The full name of the scope, it will be used during the approval process when telling a user what the client is requesting.
+   
+   .. attribute:: description
+      
+      A short description of exactly what the scope will give the client access to.
