@@ -1,1 +1,23 @@
-Approval dialog
+{% extends "oauth2_consumer/base.html" %}
+
+{% block oauth_contents %}
+<div class="secondary-heading">
+    <strong>{{ client.name }}</strong> is requesting permission to:
+</div>
+
+<ul>
+{% for scope in scopes %}
+    <li>{{ scope.full_name }}</li>
+{% endfor %}
+</ul>
+
+<form action="{% url "oauth2_approval" %}" method="POST">
+    {% csrf_token %}
+    
+    <input type="hidden" name="code" value="{{ authorization_code }}" />
+    <input type="hidden" name="code_state" value="{{ state }}" />
+    
+    <button type="submit" name="approve_access" class="btn btn-primary">Allow access</button>
+    <button type="submit" name="deny_access" class="btn">No thanks</button>
+</form>
+{% endblock %}
