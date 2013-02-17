@@ -11,9 +11,13 @@ class RedirectUriAdmin(admin.ModelAdmin):
     list_display = ("client", "url", )
 
 
+class ScopeAdmin(admin.ModelAdmin):
+    list_display = ("short_name", "full_name", "description", )
+
+
 admin.site.register(AccessToken)
 admin.site.register(AuthorizationToken)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(RedirectUri, RedirectUriAdmin)
 admin.site.register(RefreshToken)
-admin.site.register(Scope)
+admin.site.register(Scope, ScopeAdmin)
