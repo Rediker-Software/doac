@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.views.generic import View
 from . import exceptions
 
@@ -33,6 +34,7 @@ class OAuthView(View):
         
     def verify_uri(self):
         from urlparse import urlparse
+        from .models import RedirectUri
             
         PARSE_MATCH_ATTRIBUTES = ("scheme", "hostname", "port", )
         
@@ -48,6 +50,11 @@ class OAuthView(View):
                 
                 if not client_attribute == redirect_attribute:
                     raise exceptions.RedirectUriDoesNotValidate()
+            
+            try:
+                self.redirect_uri = RedirectUri.objects.get(client=self.client, url=self.redirect_uri)
+            except RedirectUri.DoesNotExist:
+                raise exceptions.RedirectUriDoesNotValidate()
         else:
             raise exceptions.RedirectUriNotProvided()
 
@@ -82,6 +89,22 @@ class AuthorizeView(OAuthView):
             return self.render_exception(e)
         
         self.state = request.GET.get("state", None)
+        
+        code = self.generate_authorization_code()
+        
+        return TemplateResponse(request, "oauth2_consumer/authorize.html")
+    
+    
+    def generate_authorization_code(self):
+        from .models import AuthorizationCode
+        
+        code = AuthorizationCode(client=self.client, redirect_uri=self.redirect_uri)
+        code.save()
+        
+        code.scope = self.scopes
+        code.save()
+        
+        return code
     
     
     def verify_response_type(self):
