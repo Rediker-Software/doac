@@ -172,6 +172,15 @@ class RefreshToken(models.Model):
     def __unicode__(self):
         return self.token
     
+    def generate_access_token(self):
+        access_token = AccessToken(client=self.client, user=self.user, refresh_token=self)
+        access_token.save()
+        
+        access_token.scope = self.scope.all()
+        access_token.save()
+        
+        return access_token
+    
     def generate_token(self):
         from django.utils.crypto import get_random_string
         
