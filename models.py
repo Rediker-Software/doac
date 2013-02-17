@@ -59,6 +59,24 @@ class AuthorizationToken(models.Model):
     def __unicode__(self):
         return self.token
     
+    def generate_refresh_token(self):
+        if self.is_active:
+            if not self.refresh_token:
+                self.refresh_token = RefreshToken()
+                
+                self.refresh_token.client = self.client
+                self.refresh_token.user = self.user
+                self.refresh_token.save()
+                
+                self.refresh_token.scope = self.scope.all()
+                self.refresh_token.save()
+                
+                self.is_active = False
+                
+                return self.refresh_token
+            
+        return None
+    
     def generate_token(self):
         from django.utils.crypto import get_random_string
         
