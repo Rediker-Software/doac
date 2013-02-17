@@ -15,8 +15,15 @@ class OAuthView(View):
                 return False
         return True
     
-    def redirect_exception(self, exeption):
-        pass
+    def redirect_exception(self, exception):
+        from django.http import QueryDict
+        
+        query = QueryDict("").copy()
+        query["error"] = exception.error
+        query["error_description"] = exception.reason
+        query["state"] = self.state
+        
+        return exception.http(self.redirect_uri.url + "?" + query.urlencode())
     
     def render_exception(self, exception):
         return exception.http(exception.reason)
