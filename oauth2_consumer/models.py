@@ -61,7 +61,11 @@ class AuthorizationToken(models.Model):
     
     def generate_refresh_token(self):
         if self.is_active:
-            if not self.refresh_token:
+            try:
+                temp = self.refresh_token
+                
+                return none
+            except RefreshToken.DoesNotExist:
                 self.refresh_token = RefreshToken()
                 
                 self.refresh_token.client = self.client
@@ -72,6 +76,7 @@ class AuthorizationToken(models.Model):
                 self.refresh_token.save()
                 
                 self.is_active = False
+                self.save()
                 
                 return self.refresh_token
             
