@@ -245,9 +245,10 @@ class TokenView(OAuthView):
                 raise
             
             self.refresh_token = self.authorization_token.generate_refresh_token()
+            self.access_token = self.refresh_token.generate_access_token()
             
             if self.refresh_token:
-                return self.render_refresh_token()
+                return self.render_authorization_token()
             else:
                 self.authorization_token.revoke_tokens()
             
@@ -256,7 +257,7 @@ class TokenView(OAuthView):
         else:
             return self.render_exception(e)
     
-    def render_refresh_token(self):
+    def render_authorization_token(self):
         from django.utils import timezone
         from .http import JsonResponse
         
@@ -266,6 +267,7 @@ class TokenView(OAuthView):
         response["refresh_token"] = self.refresh_token.token
         response["token_type"] = "bearer"
         response["expires_in"] = int(remaining.total_seconds())
+        response["access_token"] = self.access_token.token
         
         return JsonResponse(response)
     
