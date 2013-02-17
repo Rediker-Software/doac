@@ -33,3 +33,13 @@ class ScopeNotDefined(InvalidScope):
 
 class ScopeNotValid(InvalidScope):
     reason = "The scope contained values which were incorrect."
+
+
+class ResponseTypeNotDefined(InvalidRequest):
+    reason = "The request type was malformed or invalid."
+
+
+class ResponseTypeNotValid(Exception):
+    error = "unsupported_response_type"
+    http = HttpResponseUnauthorized
+    reason = "The request type was malformed or invalid."
