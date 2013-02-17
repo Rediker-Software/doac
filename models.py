@@ -28,6 +28,9 @@ class AuthorizationCode(models.Model):
     expires_at = models.DateTimeField(blank=True)
     is_active = models.BooleanField(default=True)
     
+    def __unicode__(self):
+        return self.token
+    
     def generate_token(self):
         from django.utils.crypto import get_random_string
         

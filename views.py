@@ -88,11 +88,19 @@ class AuthorizeView(OAuthView):
         except (exceptions.InvalidRequest, exceptions.ResponseTypeNotValid) as e:
             return self.render_exception(e)
         
-        self.state = request.GET.get("state", None)
+        self.state = request.GET.get("state", "o2cs")
         
         code = self.generate_authorization_code()
         
-        return TemplateResponse(request, "oauth2_consumer/authorize.html")
+        context = {
+            "authorization_code": code,
+            "client": self.client,
+            "oauth_title": "Request for Permission",
+            "scopes": self.scopes,
+            "state": self.state,
+        }
+        
+        return TemplateResponse(request, "oauth2_consumer/authorize.html", context)
     
     
     def generate_authorization_code(self):
