@@ -3,6 +3,9 @@ from django.views.generic import View
 from . import exceptions
 
 
+ALLOWED_RESPONSE_TYPES = ("code", "token", )
+
+
 class OAuthView(View):
     
     def check_get_parameters(self, *parameters):
@@ -11,11 +14,11 @@ class OAuthView(View):
                 return False
         return True
     
-    def render_exception(self, exception):
-        return exception.http(exception.reason)
-    
     def redirect_exception(self, exeption):
         pass
+    
+    def render_exception(self, exception):
+        return exception.http(exception.reason)
     
     def verify_client(self):
         from .models import Client
@@ -71,6 +74,23 @@ class AuthorizeView(OAuthView):
             self.verify_scope()
         except exceptions.InvalidScope as e:
             return self.render_exception(e)
+        
+        try:
+            self.response_type = request.GET.get("response_type", None)
+            self.verify_response_type()
+        except (exceptions.InvalidRequest, exceptions.ResponseTypeNotValid) as e:
+            return self.render_exception(e)
+        
+        self.state = request.GET.get("state", None)
+    
+    
+    def verify_response_type(self):
+        if self.response_type:
+            if not self.response_type in ALLOWED_RESPONSE_TYPES:
+                raise exceptions.ResponseTypeNotValid()
+        else:
+            raise exceptions.ResponseTypeNotDefined()
+    
     
     def verify_scope(self):
         from .models import Scope
