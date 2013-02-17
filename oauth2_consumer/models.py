@@ -15,6 +15,25 @@ class AccessToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    
+    def __unicode__(self):
+        return self.token
+    
+    def generate_token(self):
+        from django.utils.crypto import get_random_string
+        
+        return get_random_string(100)
+        
+    def save(self, *args, **kwargs):
+        from django.utils import timezone
+        import datetime
+        
+        if not self.token:
+            self.token = self.generate_token()
+        
+        self.expires_at = timezone.now() + datetime.timedelta(hours=2)
+        
+        super(AccessToken, self).save(*args, **kwargs)
 
 
 class AuthorizationCode(models.Model):
