@@ -79,6 +79,9 @@ class RedirectUri(models.Model):
     
     class Meta:
         verbose_name = "redirect URI"
+    
+    def __unicode__(self):
+        return self.url
 
 
 class RefreshToken(models.Model):

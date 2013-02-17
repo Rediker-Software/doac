@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import AccessToken, AuthorizationToken, Client, RedirectUri, RefreshToken, Scope
+from .models import AccessToken, AuthorizationCode, AuthorizationToken, Client, RedirectUri, RefreshToken, Scope
+
+
+class AuthorizationCodeAdmin(admin.ModelAdmin):
+    list_display = ("client", "redirect_uri", "token", )
+    list_filter = ("created_at", "expires_at", "is_active", )
 
 
 class ClientAdmin(admin.ModelAdmin):
@@ -16,6 +21,7 @@ class ScopeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(AccessToken)
+admin.site.register(AuthorizationCode, AuthorizationCodeAdmin)
 admin.site.register(AuthorizationToken)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(RedirectUri, RedirectUriAdmin)
