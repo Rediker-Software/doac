@@ -29,7 +29,7 @@ class OAuthView(View):
     def render_exception(self, exception):
         return exception.http(exception.reason)
     
-    def verify_client(self):
+    def verify_client_id(self):
         from .models import Client
         
         if self.client_id:
@@ -146,7 +146,7 @@ class AuthorizeView(OAuthView):
         
         try:
             self.client_id = request.GET.get("client_id", None)
-            self.verify_client()
+            self.verify_client_id()
         except exceptions.InvalidRequest as e:
             return self.render_exception(e)
         
@@ -219,6 +219,25 @@ class AuthorizeView(OAuthView):
                 self.scopes.append(scope)
         else:
             raise exceptions.ScopeNotDefined()
+
+
+class TokenView(OAuthView):
+    
+    http_method_names = ("get", )
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            self.client_id = request.GET.get("client_id", None)
+            self.verify_client_id()
+        except exceptions.InvalidRequest as e:
+            return self.render_exception(e)
+        
+        if request.GET.has_key("code"):
+            pass
+        elif request.GET.has_key("refresh_token"):
+            pass
+        else:
+            return self.render_exception(e)
 
 
 def redirect_endpoint(request):
