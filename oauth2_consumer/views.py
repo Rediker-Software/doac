@@ -237,6 +237,12 @@ class TokenView(OAuthView):
         except exceptions.InvalidRequest as e:
             return self.render_exception(e)
         
+        try:
+            self.client_secret = request.GET.get("client_secret", None)
+            self.verify_client_secret()
+        except exceptions.InvalidRequest as e:
+            return self.render_exception(e)
+        
         if request.GET.has_key("code"):
             try:
                 self.code = request.GET.get("code", None)
@@ -270,6 +276,13 @@ class TokenView(OAuthView):
         response["access_token"] = self.access_token.token
         
         return JsonResponse(response)
+    
+    def verify_client_secret(self):
+        if self.client_secret:
+            if not self.client.secret == self.client_secret:
+                raise
+        else:
+            raise
     
     def verify_code(self):
         from .models import AuthorizationToken
