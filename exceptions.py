@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from .http import HttpResponseUnauthorized
 
 
@@ -51,3 +52,12 @@ class AuthorizationCodeNotProvided(InvalidRequest):
 
 class AuthorizationCodeNotValid(InvalidRequest):
     reason = "The authorization code was malformed or invalid."
+
+
+class AccessDenied(Exception):
+    error = "access_denied"
+    http = HttpResponseRedirect
+
+
+class AuthorizationDenied(AccessDenied):
+    reason = "The request for permission was denied."
