@@ -66,7 +66,7 @@ class AuthorizationCode(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(hours=1)
+        self.expires_at = timezone.now() + datetime.timedelta(minutes=15)
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
@@ -125,7 +125,7 @@ class AuthorizationToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(hours=1)
+        self.expires_at = timezone.now() + datetime.timedelta(minutes=15)
         
         super(AuthorizationToken, self).save(*args, **kwargs)
 
@@ -204,7 +204,7 @@ class RefreshToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(hours=1)
+        self.expires_at = timezone.now() + datetime.timedelta(days=60)
         
         super(RefreshToken, self).save(*args, **kwargs)
 
