@@ -226,9 +226,8 @@ class TokenView(OAuthView):
         
         if request.GET.has_key("code"):
             try:
-                self.code = request.GET.get("code", None)
-                self.verify_code()
-            except:
+                self.verify_dictionary(request.GET, "code")
+            except Exception as e:
                 raise
             
             self.refresh_token = self.authorization_token.generate_refresh_token()
@@ -240,7 +239,14 @@ class TokenView(OAuthView):
                 self.authorization_token.revoke_tokens()
             
         elif request.GET.has_key("refresh_token"):
-            pass
+            try:
+                self.verify_dictionary(request.GET, "refresh_token")
+            except Exception as e:
+                raise
+            
+            self.access_token = self.refresh_token.generate_access_token()
+            
+            return self.render_refresh_token()
         else:
             return self.render_exception(e)
     
@@ -252,6 +258,19 @@ class TokenView(OAuthView):
         
         response = {}
         response["refresh_token"] = self.refresh_token.token
+        response["token_type"] = "bearer"
+        response["expires_in"] = int(remaining.total_seconds())
+        response["access_token"] = self.access_token.token
+        
+        return JsonResponse(response)
+    
+    def render_refresh_token(self):
+        from django.utils import timezone
+        from .http import JsonResponse
+        
+        remaining = self.access_token.expires_at - timezone.now()
+        
+        response = {}
         response["token_type"] = "bearer"
         response["expires_in"] = int(remaining.total_seconds())
         response["access_token"] = self.access_token.token
@@ -277,6 +296,17 @@ class TokenView(OAuthView):
                     
                     raise
             except AuthorizationToken.DoesNotExist:
+                raise
+        else:
+            raise
+    
+    def verify_refresh_token(self):
+        from .models import RefreshToken
+        
+        if self.refresh_token:
+            try:
+                self.refresh_token = RefreshToken.objects.get(client=self.client, token=self.refresh_token)
+            except RefreshToken.DoesNotExist:
                 raise
         else:
             raise
