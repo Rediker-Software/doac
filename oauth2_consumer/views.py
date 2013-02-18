@@ -7,6 +7,8 @@ from . import utils
 
 ALLOWED_RESPONSE_TYPES = ("code", "token", )
 
+ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", )
+
 
 class OAuthView(View):
     
@@ -230,7 +232,7 @@ class AuthorizeView(OAuthView):
                 try:
                     scope = Scope.objects.get(short_name=scope_name)
                 except Scope.DoesNotExist:
-                    raise exceptions.ScopeNotValid()
+                    raise ScopeNotValid()
                 
                 self.scopes.append(scope)
         else:
@@ -246,13 +248,8 @@ class TokenView(OAuthView):
         return super(TokenView, self).dispatch(*args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        grant_type = request.POST.get("grant_type", None)
-        
-        if not grant_type == "authorization_code":
-            return self.render_exception_js(e)
-        
         try:
-            self.verify_dictionary(request.POST, "client_id", "client_secret")
+            self.verify_dictionary(request.POST, "grant_type", "client_id", "client_secret")
         except Exception as e:
             return self.render_exception_js(e)
         
@@ -314,11 +311,12 @@ class TokenView(OAuthView):
         
         if self.client_secret:
             if not self.client.secret == self.client_secret:
-                raise exceptions.ClientSecretNotValid()
+                raise ClientSecretNotValid()
         else:
-            raise exceptions.ClientSecretNotValid()
+            raise ClientSecretNotValid()
     
     def verify_code(self):
+        from .exceptions.invalid_request import AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, AuthorizationCodeNotValid
         from .models import AuthorizationToken
         
         if self.code:
@@ -328,11 +326,22 @@ class TokenView(OAuthView):
                 if not self.authorization_token.is_active:
                     self.authorization_token.revoke_tokens()
                     
-                    raise exceptions.AuthorizationCodeAlreadyUsed()
+                    raise AuthorizationCodeAlreadyUsed()
             except AuthorizationToken.DoesNotExist:
-                raise exceptions.AuthorizationCodeNotValid()
+                raise AuthorizationCodeNotValid()
         else:
-            raise exceptions.AuthorizationCodeNotValid()
+            raise AuthorizationCodeNotProvided()
+    
+    def verify_grant_type(self):
+        from .exceptions.unsupported_grant_type import GrantTypeNotDefined, GrantTypeNotValid
+        
+        self.grant_type = self.request.POST.get("grant_type", None)
+        
+        if self.grant_type:
+            if not self.grant_type in ALLOWED_GRANT_TYPES:
+                raise GrantTypeNotValid()
+        else:
+            raise GrantTypeNotDefined()
     
     def verify_refresh_token(self):
         from .models import RefreshToken
