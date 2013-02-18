@@ -231,18 +231,18 @@ class TokenView(OAuthView):
         grant_type = request.POST.get("grant_type", None)
         
         if not grant_type == "authorization_code":
-            return self.render_exception(e)
+            return self.render_exception_js(e)
         
         try:
             self.verify_dictionary(request.POST, "client_id", "client_secret")
         except Exception as e:
-            return self.render_exception(e)
+            return self.render_exception_js(e)
         
         if request.POST.has_key("code"):
             try:
                 self.verify_dictionary(request.POST, "code")
             except Exception as e:
-                raise
+                return self.render_exception_js(e)
             
             self.refresh_token = self.authorization_token.generate_refresh_token()
             self.access_token = self.refresh_token.generate_access_token()
@@ -256,13 +256,13 @@ class TokenView(OAuthView):
             try:
                 self.verify_dictionary(request.POST, "refresh_token")
             except Exception as e:
-                raise
+                return self.render_exception_js(e)
             
             self.access_token = self.refresh_token.generate_access_token()
             
             return self.render_refresh_token()
         else:
-            return self.render_exception(e)
+            return self.render_exception_js(e)
     
     def render_authorization_token(self):
         from django.utils import timezone
@@ -294,9 +294,9 @@ class TokenView(OAuthView):
     def verify_client_secret(self):
         if self.client_secret:
             if not self.client.secret == self.client_secret:
-                raise
+                raise exceptions.ClientSecretNotValid()
         else:
-            raise
+            raise exceptions.ClientSecretNotValid()
     
     def verify_code(self):
         from .models import AuthorizationToken
@@ -308,11 +308,11 @@ class TokenView(OAuthView):
                 if not self.authorization_token.is_active:
                     self.authorization_token.revoke_tokens()
                     
-                    raise
+                    raise exceptions.AuthorizationCodeAlreadyUsed()
             except AuthorizationToken.DoesNotExist:
-                raise
+                raise exceptions.AuthorizationCodeNotValid()
         else:
-            raise
+            raise exceptions.AuthorizationCodeNotValid()
     
     def verify_refresh_token(self):
         from .models import RefreshToken
