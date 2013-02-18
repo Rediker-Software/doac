@@ -28,6 +28,14 @@ class OAuthView(View):
     
     def render_exception(self, exception):
         return exception.http(exception.reason)
+        
+    def verify_dictionary(self, dict, *args):
+        for arg in args:
+            setattr(self, arg, dict.get(arg, None))
+            
+            if hasattr(self, "verify_" + arg):
+                func = getattr(self, "verify_" + arg)
+                func()
     
     def verify_client_id(self):
         from .models import Client
@@ -40,7 +48,7 @@ class OAuthView(View):
         else:
             raise exceptions.ClientNotProvided()
         
-    def verify_uri(self):
+    def verify_redirect_uri(self):
         from urlparse import urlparse
         from .models import RedirectUri
             
@@ -75,9 +83,8 @@ class ApprovalView(OAuthView):
         utils.prune_old_authorization_codes()
         
         try:
-            self.authorization_code = request.POST.get("code", None)
-            self.verify_authorization_code()
-        except exceptions.InvalidRequest as e:
+            self.verify_dictionary(request.POST, "code")
+        except Exception as e:
             return self.render_exception(e)
         
         self.client = self.authorization_code.client
@@ -120,17 +127,17 @@ class ApprovalView(OAuthView):
         return query.urlencode()
     
     
-    def verify_authorization_code(self):
+    def verify_code(self):
         from .models import AuthorizationCode
         
-        if self.authorization_code:
+        if self.code:
             get_code = self.request.GET.get("code", None)
             
-            if not get_code == self.authorization_code:
+            if not get_code == self.code:
                 raise exceptions.AuthorizationCodeNotValid()
             
             try:
-                self.authorization_code = AuthorizationCode.objects.get(token=self.authorization_code)
+                self.authorization_code = AuthorizationCode.objects.get(token=self.code)
             except AuthorizationCode.DoesNotExist:
                 raise exceptions.AuthorizationCodeNotValid()
         else:
@@ -145,27 +152,8 @@ class AuthorizeView(OAuthView):
         utils.prune_old_authorization_codes()
         
         try:
-            self.client_id = request.GET.get("client_id", None)
-            self.verify_client_id()
-        except exceptions.InvalidRequest as e:
-            return self.render_exception(e)
-        
-        try:
-            self.redirect_uri = request.GET.get("redirect_uri", None)
-            self.verify_uri()
-        except exceptions.InvalidRequest as e:
-            return self.render_exception(e)
-        
-        try:
-            self.scope = request.GET.get("scope", None)
-            self.verify_scope()
-        except exceptions.InvalidScope as e:
-            return self.render_exception(e)
-        
-        try:
-            self.response_type = request.GET.get("response_type", None)
-            self.verify_response_type()
-        except (exceptions.InvalidRequest, exceptions.ResponseTypeNotValid) as e:
+            self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
+        except Exception as e:
             return self.render_exception(e)
         
         self.state = request.GET.get("state", "o2cs")
@@ -232,15 +220,8 @@ class TokenView(OAuthView):
             return self.render_exception(e)
         
         try:
-            self.client_id = request.GET.get("client_id", None)
-            self.verify_client_id()
-        except exceptions.InvalidRequest as e:
-            return self.render_exception(e)
-        
-        try:
-            self.client_secret = request.GET.get("client_secret", None)
-            self.verify_client_secret()
-        except exceptions.InvalidRequest as e:
+            self.verify_dictionary(request.GET, "client_id", "client_secret")
+        except Exception as e:
             return self.render_exception(e)
         
         if request.GET.has_key("code"):
