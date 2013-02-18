@@ -19,10 +19,12 @@ class ClientNotProvided(InvalidRequest):
 
 class RedirectUriDoesNotValidate(InvalidRequest):
     reason = "The reidrect URI does not validate against the client host."
+    can_redirect = False
 
 
 class RedirectUriNotProvided(InvalidRequest):
     reason = "The redirect URI was malformed or invalid."
+    can_redirect = False
 
 
 class ResponseTypeNotDefined(InvalidRequest):
