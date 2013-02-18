@@ -13,10 +13,6 @@ class AuthorizationCodeNotValid(InvalidRequest):
     reason = "The authorization code was malformed or invalid."
 
 
-class ClientDoesNotExist(InvalidRequest):
-    reason = "The client was malformed or invalid."
-
-
 class ClientNotProvided(InvalidRequest):
     reason = "The client was malformed or invalid"
 
