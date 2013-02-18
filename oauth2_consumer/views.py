@@ -139,7 +139,9 @@ class ApprovalView(OAuthView):
         
     
     def authorization_denied(self):
-        return self.redirect_exception(exceptions.AuthorizationDenied())
+        from .exceptions.access_denied import AuthorizationDenied
+        
+        return self.redirect_exception(AuthorizationDenied())
     
     
     def generate_query_string(self):
