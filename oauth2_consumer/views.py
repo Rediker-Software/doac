@@ -26,14 +26,14 @@ class OAuthView(View):
             return self.render_exception(exception)
     
     def redirect_exception(self, exception):
-        from django.http import QueryDict
+        from django.http import QueryDict, HttpResponseRedirect
         
         query = QueryDict("").copy()
         query["error"] = exception.error
         query["error_description"] = exception.reason
         query["state"] = self.state
         
-        return exception.http(self.redirect_uri.url + "?" + query.urlencode())
+        return HttpResponseRedirect(self.redirect_uri.url + "?" + query.urlencode())
     
     def render_exception(self, exception):
         from .http import HttpResponseUnauthorized
@@ -220,6 +220,7 @@ class AuthorizeView(OAuthView):
     
     def verify_scope(self):
         from .models import Scope
+        from .exceptions.invalid_scope import ScopeNotDefined, ScopeNotValid
         
         if self.scope:
             scopes = self.scope.split(",")
@@ -233,7 +234,7 @@ class AuthorizeView(OAuthView):
                 
                 self.scopes.append(scope)
         else:
-            raise exceptions.ScopeNotDefined()
+            raise ScopeNotDefined()
 
 
 class TokenView(OAuthView):
@@ -309,6 +310,8 @@ class TokenView(OAuthView):
         return JsonResponse(response)
     
     def verify_client_secret(self):
+        from .exceptions.invalid_client import ClientSecretNotValid, ClientClientNotProvided
+        
         if self.client_secret:
             if not self.client.secret == self.client_secret:
                 raise exceptions.ClientSecretNotValid()
