@@ -4,7 +4,6 @@ from .http import HttpResponseUnauthorized
 
 class InvalidRequest(Exception):
     error = "invalid_request"
-    http = HttpResponseUnauthorized
 
 
 class ClientNotProvided(InvalidRequest):
@@ -17,7 +16,6 @@ class ClientDoesNotExist(InvalidRequest):
 
 class InvalidClient(Exception):
     error = "invalid_client"
-    http = HttpResponseUnauthorized
 
 
 class ClientSecretNotValid(InvalidClient):
@@ -26,7 +24,6 @@ class ClientSecretNotValid(InvalidClient):
 
 class InvalidGrant(Exception):
     error = "invalid_grant"
-    http = HttpResponseUnauthorized
 
 
 class RedirectUriNotProvided(InvalidRequest):
@@ -39,7 +36,6 @@ class RedirectUriDoesNotValidate(InvalidRequest):
 
 class InvalidScope(Exception):
     error = "invalid_scope"
-    http = HttpResponseUnauthorized
 
 
 class ScopeNotDefined(InvalidScope):
@@ -56,7 +52,6 @@ class ResponseTypeNotDefined(InvalidRequest):
 
 class ResponseTypeNotValid(Exception):
     error = "unsupported_response_type"
-    http = HttpResponseUnauthorized
     reason = "The request type was malformed or invalid."
 
 
@@ -74,7 +69,6 @@ class AuthorizationCodeAlreadyUsed(InvalidRequest):
 
 class AccessDenied(Exception):
     error = "access_denied"
-    http = HttpResponseRedirect
 
 
 class AuthorizationDenied(AccessDenied):

@@ -28,7 +28,9 @@ class OAuthView(View):
         return exception.http(self.redirect_uri.url + "?" + query.urlencode())
     
     def render_exception(self, exception):
-        return exception.http(exception.reason)
+        from .http import HttpResponseUnauthorized
+        
+        return HttpResponseUnauthorized(exception.reason)
     
     def render_exception_js(self, exception):
         from .http import JsonResponse
