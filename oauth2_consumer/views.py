@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from . import exceptions
 from . import utils
@@ -211,22 +212,26 @@ class AuthorizeView(OAuthView):
 
 class TokenView(OAuthView):
     
-    http_method_names = ("get", )
+    http_method_names = ("post", )
     
-    def get(self, request, *args, **kwargs):
-        grant_type = request.GET.get("grant_type", None)
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(TokenView, self).dispatch(*args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        grant_type = request.POST.get("grant_type", None)
         
         if not grant_type == "authorization_code":
             return self.render_exception(e)
         
         try:
-            self.verify_dictionary(request.GET, "client_id", "client_secret")
+            self.verify_dictionary(request.POST, "client_id", "client_secret")
         except Exception as e:
             return self.render_exception(e)
         
-        if request.GET.has_key("code"):
+        if request.POST.has_key("code"):
             try:
-                self.verify_dictionary(request.GET, "code")
+                self.verify_dictionary(request.POST, "code")
             except Exception as e:
                 raise
             
@@ -238,9 +243,9 @@ class TokenView(OAuthView):
             else:
                 self.authorization_token.revoke_tokens()
             
-        elif request.GET.has_key("refresh_token"):
+        elif request.POST.has_key("refresh_token"):
             try:
-                self.verify_dictionary(request.GET, "refresh_token")
+                self.verify_dictionary(request.POST, "refresh_token")
             except Exception as e:
                 raise
             
