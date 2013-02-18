@@ -23,6 +23,10 @@ class AccessToken(models.Model):
         from django.utils.crypto import get_random_string
         
         return get_random_string(100)
+    
+    def revoke(self):
+        self.is_active = False
+        self.save()
         
     def save(self, *args, **kwargs):
         from django.utils import timezone
