@@ -16,6 +16,15 @@ class OAuthView(View):
                 return False
         return True
     
+    def handle_exception(self, exception):
+        can_redirect = getattr(exception, "can_redirect", True)
+        redirect_uri = getattr(self, "redirect_uri", None)
+        
+        if can_redirect and redirect_uri:
+            return self.redirect_exception(exception)
+        else:
+            return self.render_exception(exception)
+    
     def redirect_exception(self, exception):
         from django.http import QueryDict
         
@@ -166,12 +175,12 @@ class AuthorizeView(OAuthView):
     def get(self, request, *args, **kwargs):
         utils.prune_old_authorization_codes()
         
+        self.state = request.GET.get("state", "o2cs")
+        
         try:
             self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
         except Exception as e:
-            return self.render_exception(e)
-        
-        self.state = request.GET.get("state", "o2cs")
+            return self.handle_exception(e)
         
         code = self.generate_authorization_code()
         
