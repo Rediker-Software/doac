@@ -15,6 +15,20 @@ class ClientDoesNotExist(InvalidRequest):
     reason = "The client was malformed or invalid."
 
 
+class InvalidClient(Exception):
+    error = "invalid_client"
+    http = HttpResponseUnauthorized
+
+
+class ClientSecretNotValid(InvalidClient):
+    reason = "The client secret was malformed or invalid."
+
+
+class InvalidGrant(Exception):
+    error = "invalid_grant"
+    http = HttpResponseUnauthorized
+
+
 class RedirectUriNotProvided(InvalidRequest):
     reason = "The redirect URI was malformed or invalid."
 
@@ -52,6 +66,10 @@ class AuthorizationCodeNotProvided(InvalidRequest):
 
 class AuthorizationCodeNotValid(InvalidRequest):
     reason = "The authorization code was malformed or invalid."
+
+
+class AuthorizationCodeAlreadyUsed(InvalidRequest):
+    reason = "The authorization code was already used to get a refresh token."
 
 
 class AccessDenied(Exception):
