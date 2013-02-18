@@ -18,5 +18,9 @@ class InvalidScope(Exception):
     error = "invalid_scope"
 
 
+class UnsupportedGrantType(Exception):
+    error = "unsupported_grant_type"
+
+
 class UnsupportedResponseType(Exception):
     error = "unsupported_response_type"
