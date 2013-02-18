@@ -29,6 +29,15 @@ class OAuthView(View):
     
     def render_exception(self, exception):
         return exception.http(exception.reason)
+    
+    def render_exception_js(self, exception):
+        from .http import JsonResponse
+        
+        response = {}
+        response["error"] = exception.error
+        response["error_description"] = exception.reason
+        
+        return JsonResponse(response)
         
     def verify_dictionary(self, dict, *args):
         for arg in args:
