@@ -253,21 +253,22 @@ class TokenView(OAuthView):
         except Exception as e:
             return self.render_exception_js(e)
         
-        if request.POST.has_key("code"):
+        if self.grant_type == "authorization_code":
             try:
                 self.verify_dictionary(request.POST, "code")
             except Exception as e:
                 return self.render_exception_js(e)
             
             self.refresh_token = self.authorization_token.generate_refresh_token()
-            self.access_token = self.refresh_token.generate_access_token()
             
-            if self.refresh_token:
-                return self.render_authorization_token()
-            else:
+            if not self.refresh_token:
                 self.authorization_token.revoke_tokens()
             
-        elif request.POST.has_key("refresh_token"):
+            self.access_token = self.refresh_token.generate_access_token()
+            
+            return self.render_authorization_token()
+            
+        elif self.grant_type == "refresh_token":
             try:
                 self.verify_dictionary(request.POST, "refresh_token")
             except Exception as e:
@@ -276,8 +277,6 @@ class TokenView(OAuthView):
             self.access_token = self.refresh_token.generate_access_token()
             
             return self.render_refresh_token()
-        else:
-            return self.render_exception_js(e)
     
     def render_authorization_token(self):
         from django.utils import timezone
@@ -307,13 +306,14 @@ class TokenView(OAuthView):
         return JsonResponse(response)
     
     def verify_client_secret(self):
-        from .exceptions.invalid_client import ClientSecretNotValid, ClientClientNotProvided
+        from .exceptions.invalid_client import ClientSecretNotValid
+        from .exceptions.invalid_request import ClientSecretNotProvided
         
         if self.client_secret:
             if not self.client.secret == self.client_secret:
                 raise ClientSecretNotValid()
         else:
-            raise ClientSecretNotValid()
+            raise ClientSecretNotProvided()
     
     def verify_code(self):
         from .exceptions.invalid_request import AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, AuthorizationCodeNotValid

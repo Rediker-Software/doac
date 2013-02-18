@@ -14,7 +14,11 @@ class AuthorizationCodeNotValid(InvalidRequest):
 
 
 class ClientNotProvided(InvalidRequest):
-    reason = "The client was malformed or invalid"
+    reason = "The client was malformed or invalid."
+
+
+class ClientSecretNotProvided(InvalidRequest):
+    reason = "The client secret was malformed or invalid."
 
 
 class RedirectUriDoesNotValidate(InvalidRequest):
