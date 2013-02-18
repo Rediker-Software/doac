@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from . import exceptions
 from . import utils
 
 
@@ -51,18 +50,21 @@ class OAuthView(View):
     
     def verify_client_id(self):
         from .models import Client
+        from .exceptions.invalid_client import ClientDoesNotExist
+        from .exceptions.invalid_request import ClientNotProvided
         
         if self.client_id:
             try:
                 self.client = Client.objects.get(id=self.client_id)
             except Client.DoesNotExist:
-                raise exceptions.ClientDoesNotExist()
+                raise ClientDoesNotExist()
         else:
-            raise exceptions.ClientNotProvided()
+            raise ClientNotProvided()
         
     def verify_redirect_uri(self):
         from urlparse import urlparse
         from .models import RedirectUri
+        from .exceptions.invalid_request import RedirectUriDoesNotValidate, RedirectUriNotProvided
             
         PARSE_MATCH_ATTRIBUTES = ("scheme", "hostname", "port", )
         
@@ -77,14 +79,14 @@ class OAuthView(View):
                 redirect_attribute = getattr(redirect_parse, attribute)
                 
                 if not client_attribute == redirect_attribute:
-                    raise exceptions.RedirectUriDoesNotValidate()
+                    raise RedirectUriDoesNotValidate()
             
             try:
                 self.redirect_uri = RedirectUri.objects.get(client=self.client, url=self.redirect_uri)
             except RedirectUri.DoesNotExist:
-                raise exceptions.RedirectUriDoesNotValidate()
+                raise RedirectUriDoesNotValidate()
         else:
-            raise exceptions.RedirectUriNotProvided()
+            raise RedirectUriNotProvided()
 
 
 class ApprovalView(OAuthView):
@@ -141,19 +143,20 @@ class ApprovalView(OAuthView):
     
     def verify_code(self):
         from .models import AuthorizationCode
+        from .exceptions.invalid_request import AuthorizationCodeNotValid, AuthorizationCodeNotProvided
         
         if self.code:
             get_code = self.request.GET.get("code", None)
             
             if not get_code == self.code:
-                raise exceptions.AuthorizationCodeNotValid()
+                raise AuthorizationCodeNotValid()
             
             try:
                 self.authorization_code = AuthorizationCode.objects.get(token=self.code)
             except AuthorizationCode.DoesNotExist:
-                raise exceptions.AuthorizationCodeNotValid()
+                raise AuthorizationCodeNotValid()
         else:
-            raise exceptions.AuthorizationCodeNotProvided()
+            raise AuthorizationCodeNotProvided()
 
 
 class AuthorizeView(OAuthView):
@@ -196,11 +199,14 @@ class AuthorizeView(OAuthView):
     
     
     def verify_response_type(self):
+        from .exceptions.unsupported_response_type import ResponseTypeNotValid
+        from .exceptions.invalid_request import ResponseTypeNotDefined
+        
         if self.response_type:
             if not self.response_type in ALLOWED_RESPONSE_TYPES:
-                raise exceptions.ResponseTypeNotValid()
+                raise ResponseTypeNotValid()
         else:
-            raise exceptions.ResponseTypeNotDefined()
+            raise ResponseTypeNotDefined()
     
     
     def verify_scope(self):
