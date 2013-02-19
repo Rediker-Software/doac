@@ -1,6 +1,6 @@
-================
-Scope Exceptions
-================
+========================
+Invalid Scope Exceptions
+========================
 
 .. module:: oauth2_consumer.exceptions
 

@@ -2,11 +2,15 @@
 Base Exceptions
 ===============
 
-.. module:: oauth2_consumer.exceptions
+.. module:: oauth2_consumer.exceptions.base
 
 .. exception:: AccessDenied
    
    The :exc:`AccessDenied` exception is raised during the approval step of the authorization process if the user rejects the clients request for permission.  The OAuth ``error`` for this exception is ``access_denied``.
+
+.. exception:: InvalidClient
+
+.. exception:: InvalidGrant
 
 .. exception:: InvalidRequest
    
@@ -23,6 +27,8 @@ Base Exceptions
    
    The :exc:`InvalidScope` exception is raised because the scope that was provided for the request does not pass validation or was not provided.  The OAuth ``error`` for this exception is ``invalid_scope``.
 
-.. exception:: ResponseTypeNotValid
+.. exception:: UnsupportedGrantType
+
+.. exception:: UnsupportedResponseType
    
-   The :exc:`ResponseTypeNotValid` exception is raised during the initial authorization step because the requested ``response_type`` was not supported.  The OAuth ``error`` for this exception is ``unsupported_response_type``.
+   The :exc:`UnsupportedResponseType` exception is raised during the initial authorization step because the requested ``response_type`` was not supported.  The OAuth ``error`` for this exception is ``unsupported_response_type``.
