@@ -1,7 +1,7 @@
 from .base import UnsupportedGrantType
 
 
-class GrantTypeNotDefined(UnsupportedGrantType):
+class GrantTypeNotProvided(UnsupportedGrantType):
     reason = "The grant type was malformed or invalid."
 
 

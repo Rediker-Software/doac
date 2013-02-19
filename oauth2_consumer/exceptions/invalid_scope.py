@@ -1,7 +1,7 @@
 from .base import InvalidScope
 
 
-class ScopeNotDefined(InvalidScope):
+class ScopeNotProvided(InvalidScope):
     reason = "The scope was malformed or invalid."
 
 

@@ -18,4 +18,4 @@ Invalid Request Exceptions
 
 .. exception:: RedirectUriDoesNotValidate
 
-.. exception:: ResponseTypeNotDefined
+.. exception:: ResponseTypeNotProvided

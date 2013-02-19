@@ -213,18 +213,18 @@ class AuthorizeView(OAuthView):
     
     def verify_response_type(self):
         from .exceptions.unsupported_response_type import ResponseTypeNotValid
-        from .exceptions.invalid_request import ResponseTypeNotDefined
+        from .exceptions.invalid_request import ResponseTypeNotProvided
         
         if self.response_type:
             if not self.response_type in ALLOWED_RESPONSE_TYPES:
                 raise ResponseTypeNotValid()
         else:
-            raise ResponseTypeNotDefined()
+            raise ResponseTypeNotProvided()
     
     
     def verify_scope(self):
         from .models import Scope
-        from .exceptions.invalid_scope import ScopeNotDefined, ScopeNotValid
+        from .exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
         
         if self.scope:
             scopes = self.scope.split(",")
@@ -238,7 +238,7 @@ class AuthorizeView(OAuthView):
                 
                 self.scopes.append(scope)
         else:
-            raise ScopeNotDefined()
+            raise ScopeNotProvided()
 
 
 class TokenView(OAuthView):
@@ -335,7 +335,7 @@ class TokenView(OAuthView):
             raise AuthorizationCodeNotProvided()
     
     def verify_grant_type(self):
-        from .exceptions.unsupported_grant_type import GrantTypeNotDefined, GrantTypeNotValid
+        from .exceptions.unsupported_grant_type import GrantTypeNotProvided, GrantTypeNotValid
         
         self.grant_type = self.request.POST.get("grant_type", None)
         
@@ -343,7 +343,7 @@ class TokenView(OAuthView):
             if not self.grant_type in ALLOWED_GRANT_TYPES:
                 raise GrantTypeNotValid()
         else:
-            raise GrantTypeNotDefined()
+            raise GrantTypeNotProvided()
     
     def verify_refresh_token(self):
         from .models import RefreshToken

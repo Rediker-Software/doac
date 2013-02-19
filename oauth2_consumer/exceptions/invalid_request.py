@@ -31,5 +31,5 @@ class RedirectUriNotProvided(InvalidRequest):
     can_redirect = False
 
 
-class ResponseTypeNotDefined(InvalidRequest):
+class ResponseTypeNotProvided(InvalidRequest):
     reason = "The request type was malformed or invalid."

@@ -2,8 +2,8 @@
 Invalid Scope Exceptions
 ========================
 
-.. module:: oauth2_consumer.exceptions
+.. module:: oauth2_consumer.exceptions.invalid_scope
 
-.. exception:: ScopeNotDefined
+.. exception:: ScopeNotProvided
 
 .. exception:: ScopeNotValid
