@@ -31,22 +31,29 @@ class TestErrors(TestCase):
         self.assertEquals(request.status_code, 302)
     
     def test_client_id(self):
+        from oauth2_consumer.exceptions.invalid_request import ClientNotProvided
+        from oauth2_consumer.exceptions.invalid_client import ClientDoesNotExist
+        
         request = self.client.get("/oauth/authorize/")
-        self.assertEqual(request.content, "The client was malformed or invalid.")
-        self.assertEqual(request.status_code, 401)
+        self.assertExceptionRendered(request, ClientNotProvided())
         
         request = self.client.get("/oauth/authorize/?client_id=")
-        self.assertEqual(request.content, "The client was malformed or invalid.")
-        self.assertEqual(request.status_code, 401)
+        self.assertExceptionRendered(request, ClientNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=1234")
+        self.assertExceptionRendered(request, ClientDoesNotExist())
     
     def test_redirect_uri(self):
+        from oauth2_consumer.exceptions.invalid_request import RedirectUriNotProvided, RedirectUriDoesNotValidate
+        
         request = self.client.get("/oauth/authorize/?client_id=%s" % (self.oauth_client.id, ))
-        self.assertEqual(request.content, "The redirect URI was malformed or invalid.")
-        self.assertEqual(request.status_code, 401)
+        self.assertExceptionRendered(request, RedirectUriNotProvided())
         
         request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=" % (self.oauth_client.id, ))
-        self.assertEqual(request.content, "The redirect URI was malformed or invalid.")
-        self.assertEqual(request.status_code, 401)
+        self.assertExceptionRendered(request, RedirectUriNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=invalid" % (self.oauth_client.id, ))
+        self.assertExceptionRendered(request, RedirectUriDoesNotValidate())
     
     def test_scope(self):
         from oauth2_consumer.exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
