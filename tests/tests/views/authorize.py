@@ -1,5 +1,6 @@
 from django.test import TestCase
 from oauth2_consumer.models import Client, RedirectUri
+import urllib
 
 class TestErrors(TestCase):
     
@@ -11,6 +12,18 @@ class TestErrors(TestCase):
         self.redirect_uri.save()
         
         self.client_secret = self.oauth_client.secret
+    
+    def assertExceptionRedirect(self, request, exception):
+        params = {
+            "error": exception.error,
+            "error_description": exception.reason,
+            "state": "o2cs",
+        }
+        
+        url = self.redirect_uri.url + "?" + urllib.urlencode(params)
+        
+        self.assertRedirects(request, url)
+        self.assertEquals(request.status_code, 302)
     
     def test_client_id(self):
         request = self.client.get("/oauth/authorize/")
