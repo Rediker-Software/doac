@@ -1,5 +1,5 @@
 from django.test import TestCase
-from oauth2_consumer.models import Client, RedirectUri
+from oauth2_consumer.models import AuthorizationCode, Client, RedirectUri, Scope
 import urllib
 
 class TestErrors(TestCase):
@@ -8,10 +8,13 @@ class TestErrors(TestCase):
         self.oauth_client = Client(name="Test Client", access_host="http://localhost/")
         self.oauth_client.save()
         
+        self.client_secret = self.oauth_client.secret
+        
         self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
         self.redirect_uri.save()
         
-        self.client_secret = self.oauth_client.secret
+        self.scope = Scope(short_name="test", full_name="Test Scope", description="This is a test scope.")
+        self.scope.save()
     
     def assertExceptionRendered(self, request, exception):
         
@@ -66,4 +69,48 @@ class TestErrors(TestCase):
         
         request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=invalid" % (self.oauth_client.id, self.redirect_uri.url, ))
         self.assertExceptionRedirect(request, ScopeNotValid())
+    
+    def test_response_type(self):
+        from oauth2_consumer.exceptions.invalid_request import ResponseTypeNotProvided
+        from oauth2_consumer.exceptions.unsupported_response_type import ResponseTypeNotValid
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=%s" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
+        self.assertExceptionRedirect(request, ResponseTypeNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=%s&response_type=" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
+        self.assertExceptionRedirect(request, ResponseTypeNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=%s&response_type=invalid" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
+        self.assertExceptionRedirect(request, ResponseTypeNotValid())
+
+
+class TestResponse(TestCase):
+    
+    def setUp(self):
+        from django.contrib.auth.models import User
+        
+        self.user = User.objects.create_user("test", "test@test.com", "test")
+        
+        self.oauth_client = Client(name="Test Client", access_host="http://localhost/")
+        self.oauth_client.save()
+        
+        self.client_secret = self.oauth_client.secret
+        
+        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
+        self.redirect_uri.save()
+        
+        self.scope = Scope(short_name="test", full_name="Test Scope", description="This is a test scope.")
+        self.scope.save()
+    
+    def test_approval_form(self):
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=%s&response_type=token" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
+        
+        self.assertTemplateUsed(request, "oauth2_consumer/authorize.html")
+        
+        self.assertEqual(request.context["authorization_code"], AuthorizationCode.objects.all()[0])
+        self.assertEqual(request.context["client"], self.oauth_client)
+        self.assertEqual(request.context["scopes"], [self.scope])
+        self.assertEqual(request.context["state"], "o2cs")
+        
+        self.assertEqual(AuthorizationCode.objects.count(), 1)
         
