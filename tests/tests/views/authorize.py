@@ -39,6 +39,19 @@ class TestErrors(TestCase):
         self.assertEqual(request.content, "The redirect URI was malformed or invalid.")
         self.assertEqual(request.status_code, 401)
         
-        request = self.client.get("/oauth/authorize/?client_id=%s&request_uri=" % (self.oauth_client.id, ))
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=" % (self.oauth_client.id, ))
         self.assertEqual(request.content, "The redirect URI was malformed or invalid.")
         self.assertEqual(request.status_code, 401)
+    
+    def test_scope(self):
+        from oauth2_consumer.exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s" % (self.oauth_client.id, self.redirect_uri.url, ))
+        self.assertExceptionRedirect(request, ScopeNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=" % (self.oauth_client.id, self.redirect_uri.url, ))
+        self.assertExceptionRedirect(request, ScopeNotProvided())
+        
+        request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=invalid" % (self.oauth_client.id, self.redirect_uri.url, ))
+        self.assertExceptionRedirect(request, ScopeNotValid())
+        
