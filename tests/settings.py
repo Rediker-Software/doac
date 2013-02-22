@@ -9,6 +9,8 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = True
 
+ROOT_URLCONF = "tests.urls"
+
 INSTALLED_APPS = [
     "django.contrib.auth",
     'django.contrib.contenttypes',
