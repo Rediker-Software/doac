@@ -2,13 +2,12 @@ from django.test import TestCase
 from oauth2_consumer.models import AuthorizationCode, Client, RedirectUri, Scope
 import urllib
 
+
 class TestErrors(TestCase):
     
     def setUp(self):
         self.oauth_client = Client(name="Test Client", access_host="http://localhost/")
         self.oauth_client.save()
-        
-        self.client_secret = self.oauth_client.secret
         
         self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
         self.redirect_uri.save()
@@ -93,8 +92,6 @@ class TestResponse(TestCase):
         
         self.oauth_client = Client(name="Test Client", access_host="http://localhost/")
         self.oauth_client.save()
-        
-        self.client_secret = self.oauth_client.secret
         
         self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
         self.redirect_uri.save()
