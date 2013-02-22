@@ -13,6 +13,11 @@ class TestErrors(TestCase):
         
         self.client_secret = self.oauth_client.secret
     
+    def assertExceptionRendered(self, request, exception):
+        
+        self.assertEquals(request.content, exception.reason)
+        self.assertEquals(request.status_code, 401)
+    
     def assertExceptionRedirect(self, request, exception):
         params = {
             "error": exception.error,
