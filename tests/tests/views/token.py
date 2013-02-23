@@ -28,3 +28,16 @@ class TestErrors(TokenTestCase):
         
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": 1234})
         self.assertExceptionJson(request, ClientDoesNotExist())
+    
+    def test_client_secret(self):
+        from oauth2_consumer.exceptions.invalid_client import ClientSecretNotValid
+        from oauth2_consumer.exceptions.invalid_request import ClientSecretNotProvided
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id})
+        self.assertExceptionJson(request, ClientSecretNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": ""})
+        self.assertExceptionJson(request, ClientSecretNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": "notVerySecret"})
+        self.assertExceptionJson(request, ClientSecretNotValid())
