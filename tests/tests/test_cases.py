@@ -19,6 +19,17 @@ class OAuthTestCase(TestCase):
         self.assertEquals(request.content, exception.reason)
         self.assertEquals(request.status_code, 401)
     
+    def assertExceptionJson(self, request, exception):
+        import json
+        
+        data = {
+            "error": exception.error,
+            "error_description": exception.reason,
+        }
+        
+        self.assertEquals(request.content, json.dumps(data))
+        self.assertEquals(request.status_code, 401)
+    
     def assertExceptionRedirect(self, request, exception):
         params = {
             "error": exception.error,
