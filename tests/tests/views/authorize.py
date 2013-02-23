@@ -29,6 +29,9 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=invalid" % (self.oauth_client.id, ))
         self.assertExceptionRendered(request, RedirectUriDoesNotValidate())
+        
+        request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=http://localhost/invalid" % (self.oauth_client.id, ))
+        self.assertExceptionRendered(request, RedirectUriDoesNotValidate())
     
     def test_scope(self):
         from oauth2_consumer.exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
