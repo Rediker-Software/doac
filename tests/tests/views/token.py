@@ -41,3 +41,19 @@ class TestErrors(TokenTestCase):
         
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": "notVerySecret"})
         self.assertExceptionJson(request, ClientSecretNotValid())
+    
+    def test_code(self):
+        from oauth2_consumer.exceptions.invalid_request import AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, AuthorizationCodeNotValid
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret})
+        self.assertExceptionJson(request, AuthorizationCodeNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": ""})
+        self.assertExceptionJson(request, AuthorizationCodeNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": "invalid"})
+        self.assertExceptionJson(request, AuthorizationCodeNotValid())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
+        self.assertExceptionJson(request, AuthorizationCodeAlreadyUsed())
