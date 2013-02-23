@@ -81,3 +81,24 @@ class TestTokenResponse(TokenTestCase):
         
         self.assertEqual(request.content, json.dumps(response))
         self.assertEqual(request.status_code, 200)
+    
+    def test_refresh_token(self):
+        refresh_token = self.authorization_token.generate_refresh_token()
+        
+        data = {
+            "grant_type": "refresh_token",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+            "refresh_token": refresh_token.token,
+        }
+        
+        request = self.client.post(reverse("oauth2_token"), data)
+        
+        response = {
+            "token_type": "bearer",
+            "expires_in": 7199,
+            "access_token": refresh_token.access_tokens.all()[0].token,
+        }
+        
+        self.assertEqual(request.content, json.dumps(response))
+        self.assertEqual(request.status_code, 200)
