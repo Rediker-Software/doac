@@ -32,3 +32,18 @@ class TestApprovalErrors(ApprovalTestCase):
         
         request = self.client.post(reverse("oauth2_approval") + "?code=invalid", {"code": "invalid"})
         self.assertExceptionRendered(request, AuthorizationCodeNotValid())
+
+
+class TestApprovalResponse(ApprovalTestCase):
+    
+    def test_denied(self):
+        from oauth2_consumer.exceptions.access_denied import AuthorizationDenied
+        
+        data = {
+            "code": self.authorization_code.token,
+            "code_state": "o2cs",
+            "deny_access": None,
+        }
+        
+        request = self.client.post(reverse("oauth2_approval") + "?code=%s" % (self.authorization_code.token, ), data)
+        self.assertExceptionRedirect(request, AuthorizationDenied())
