@@ -6,7 +6,7 @@ class AuthorizationCodeAlreadyUsed(InvalidRequest):
 
 
 class AuthorizationCodeNotProvided(InvalidRequest):
-    reason = "The authorization code was malformed or invalid."
+    reason = "The authorization code was not provided."
 
 
 class AuthorizationCodeNotValid(InvalidRequest):
@@ -14,11 +14,11 @@ class AuthorizationCodeNotValid(InvalidRequest):
 
 
 class ClientNotProvided(InvalidRequest):
-    reason = "The client was malformed or invalid."
+    reason = "The client was not provided."
 
 
 class ClientSecretNotProvided(InvalidRequest):
-    reason = "The client secret was malformed or invalid."
+    reason = "The client secret was not provided."
 
 
 class RedirectUriDoesNotValidate(InvalidRequest):
@@ -27,9 +27,17 @@ class RedirectUriDoesNotValidate(InvalidRequest):
 
 
 class RedirectUriNotProvided(InvalidRequest):
-    reason = "The redirect URI was malformed or invalid."
+    reason = "The redirect URI was not provided."
     can_redirect = False
 
 
+class RefreshTokenNotProvided(InvalidRequest):
+    reason = "The refresh token was not provided."
+
+
+class RefreshTokenNotValid(InvalidRequest):
+    reason = "The refresh token was malformed or invalid."
+
+
 class ResponseTypeNotProvided(InvalidRequest):
-    reason = "The request type was malformed or invalid."
+    reason = "The request type was not provided."
