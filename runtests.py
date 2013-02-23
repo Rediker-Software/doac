@@ -3,6 +3,14 @@ import sys
 
 sys.path.insert(0, os.getcwd())
 
+try:
+    from coverage import coverage
+
+    cov = coverage()
+    cov.start()
+except ImportError:
+    cov = None
+
 from django.conf import settings
 from tests import settings as test_settings
 
@@ -15,3 +23,7 @@ TestRunner = get_runner(settings)
 runner = TestRunner(verbosity=1, interactive=False, failfast=True)
 
 runner.run_tests(["tests", ])
+
+if cov:
+    cov.stop()
+    cov.html_report()

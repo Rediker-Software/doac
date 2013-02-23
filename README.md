@@ -23,3 +23,4 @@ You can run the tests with:
 ```
 python runtests.py
 ```
+This will also generate a code coverage report if you have the `coverage` module [installed from pip](https://pypi.python.org/pypi/coverage).
