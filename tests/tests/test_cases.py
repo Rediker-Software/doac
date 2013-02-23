@@ -1,5 +1,6 @@
 from django.test import TestCase
 from oauth2_consumer.models import AuthorizationCode, AuthorizationToken, Client, RedirectUri, Scope
+import urllib
 
 
 class OAuthTestCase(TestCase):
@@ -28,7 +29,7 @@ class OAuthTestCase(TestCase):
         }
         
         self.assertEquals(request.content, json.dumps(data))
-        self.assertEquals(request.status_code, 401)
+        self.assertEquals(request.status_code, 200)
     
     def assertExceptionRedirect(self, request, exception):
         params = {
