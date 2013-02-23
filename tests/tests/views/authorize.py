@@ -1,9 +1,8 @@
 from oauth2_consumer.models import AuthorizationCode, Client, RedirectUri, Scope
 from ..test_cases import AuthorizeTestCase
-import urllib
 
 
-class TestErrors(AuthorizeTestCase):
+class TestAuthorizeErrors(AuthorizeTestCase):
     
     def test_client_id(self):
         from oauth2_consumer.exceptions.invalid_request import ClientNotProvided
@@ -56,13 +55,7 @@ class TestErrors(AuthorizeTestCase):
         self.assertExceptionRedirect(request, ResponseTypeNotValid())
 
 
-class TestResponse(AuthorizeTestCase):
-    
-    def setUp(self):
-        super(TestResponse, self).setUp()
-        
-        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
-        self.redirect_uri.save()
+class TestAuthorizeResponse(AuthorizeTestCase):
     
     def test_approval_form(self):
         request = self.client.get("/oauth/authorize/?client_id=%s&redirect_uri=%s&scope=%s&response_type=token" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
