@@ -1,8 +1,9 @@
 from django.core.urlresolvers import reverse
 from ..test_cases import TokenTestCase
+import json
 
 
-class TestErrors(TokenTestCase):
+class TestTokenErrors(TokenTestCase):
     
     def test_grant_type(self):
         from oauth2_consumer.exceptions.unsupported_grant_type import GrantTypeNotProvided, GrantTypeNotValid
@@ -57,3 +58,26 @@ class TestErrors(TokenTestCase):
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
         self.assertExceptionJson(request, AuthorizationCodeAlreadyUsed())
+
+
+class TestTokenResponse(TokenTestCase):
+    
+    def test_authorization_token(self):
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+            "code": self.authorization_token.token,
+        }
+        
+        request = self.client.post(reverse("oauth2_token"), data)
+        
+        response = {
+            "refresh_token": self.authorization_token.refresh_token.token,
+            "token_type": "bearer",
+            "expires_in": 5183999,
+            "access_token": self.authorization_token.refresh_token.access_tokens.all()[0].token,
+        }
+        
+        self.assertEqual(request.content, json.dumps(response))
+        self.assertEqual(request.status_code, 200)
