@@ -1,14 +1,42 @@
-import os
-import sys
+from argparse import ArgumentParser
 
-sys.path.insert(0, os.getcwd())
+parser = ArgumentParser(description="Run the test suite.")
 
-try:
-    from coverage import coverage
+parser.add_argument(
+    "--failfast",
+    action="store_true",
+    default=False,
+    dest="failfast",
+    help="Stop the test suite after the first failed test.",
+)
 
-    cov = coverage()
-    cov.start()
-except ImportError:
+parser.add_argument(
+    "--no-coverage",
+    action="store_false",
+    default=True,
+    dest="coverage",
+    help="Do not run coverage.py while running the tests.",
+)
+
+parser.add_argument(
+    "--no-input",
+    action="store_false",
+    default=True,
+    dest="interactive",
+    help="If the tests require input, do not prompt the user for input.",
+)
+
+args = parser.parse_args()
+
+if args.coverage:
+    try:
+        from coverage import coverage
+
+        cov = coverage()
+        cov.start()
+    except ImportError:
+        cov = None
+else:
     cov = None
 
 from django.conf import settings
@@ -20,7 +48,7 @@ from django.test.utils import get_runner
 
 TestRunner = get_runner(settings)
 
-runner = TestRunner(verbosity=1, interactive=False, failfast=True)
+runner = TestRunner(verbosity=1, interactive=args.interactive, failfast=args.failfast)
 
 runner.run_tests(["tests", ])
 

@@ -7,6 +7,9 @@ This project is in active development in the alpha stage.  It is not recommended
 ## What do I need to use this?
 - Django 1.5
 - Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
+- Python 2.7
+
+This plugin has not been tested on other configurations.  If it works with different requirements, or if a requirement is missing from the list, feel free to bring up an issue.
 
 ## What else does this have support for?
 - Django [admin application](https://docs.djangoproject.com/en/1.5/ref/contrib/admin/)
@@ -23,4 +26,4 @@ You can run the tests with:
 ```
 python runtests.py
 ```
-This will also generate a code coverage report if you have the `coverage` module [installed from pip](https://pypi.python.org/pypi/coverage).
+The test runner has support for coverage.py along with some other options.
