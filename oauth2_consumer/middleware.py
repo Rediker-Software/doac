@@ -4,11 +4,7 @@ HANDLERS = ("oauth2_consumer.handlers.bearer.BearerHandler", )
 class AuthenticationMiddleware:
     
     def process_request(self, request):
-        self.request = request
-        
         http_authorization = request.META.get("HTTP_AUTHORIZATION", None)
-        
-        request.auth_type = None
         
         if not http_authorization:
             return
@@ -20,22 +16,18 @@ class AuthenticationMiddleware:
         
         self.validate_auth_type()
         
-        print "0"
-        
         if not self.handler_name:
-            return
+            raise
         
         self.load_handler()
         
-        print "1"
-        
         if not self.handler:
-            return
+            raise
         
-        if not self.handler.validate(self.auth_value):
-            return
+        if not self.handler.validate(self.auth_value, request):
+            raise
         
-        print "Valid"
+        request.user = self.handler.authenticate(self.auth_value, request)
         
     def load_handler(self):
         if not self.handler_name:
@@ -49,8 +41,6 @@ class AuthenticationMiddleware:
     def validate_auth_type(self):
         for handler in HANDLERS:
             handler_type = handler.split(".")[-2]
-            
-            print handler_type
             
             if handler_type == self.auth_type:
                 self.handler_name = handler
