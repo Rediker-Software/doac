@@ -27,6 +27,7 @@ class AuthenticationMiddleware:
         if not self.handler.validate(self.auth_value, request):
             raise
         
+        request.access_token = self.handler.access_token(self.auth_value, request)
         request.user = self.handler.authenticate(self.auth_value, request)
         
     def load_handler(self):
