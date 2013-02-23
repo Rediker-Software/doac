@@ -14,6 +14,22 @@ class OAuthTestCase(TestCase):
         
         self.scope = Scope(short_name="test", full_name="Test Scope", description="This is a test scope.")
         self.scope.save()
+    
+    def assertExceptionRendered(self, request, exception):
+        self.assertEquals(request.content, exception.reason)
+        self.assertEquals(request.status_code, 401)
+    
+    def assertExceptionRedirect(self, request, exception):
+        params = {
+            "error": exception.error,
+            "error_description": exception.reason,
+            "state": "o2cs",
+        }
+        
+        url = self.redirect_uri.url + "?" + urllib.urlencode(params)
+        
+        self.assertRedirects(request, url)
+        self.assertEquals(request.status_code, 302)
 
 
 class AuthorizeTestCase(OAuthTestCase):

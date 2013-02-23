@@ -5,22 +5,6 @@ import urllib
 
 class TestErrors(AuthorizeTestCase):
     
-    def assertExceptionRendered(self, request, exception):
-        self.assertEquals(request.content, exception.reason)
-        self.assertEquals(request.status_code, 401)
-    
-    def assertExceptionRedirect(self, request, exception):
-        params = {
-            "error": exception.error,
-            "error_description": exception.reason,
-            "state": "o2cs",
-        }
-        
-        url = self.redirect_uri.url + "?" + urllib.urlencode(params)
-        
-        self.assertRedirects(request, url)
-        self.assertEquals(request.status_code, 302)
-    
     def test_client_id(self):
         from oauth2_consumer.exceptions.invalid_request import ClientNotProvided
         from oauth2_consumer.exceptions.invalid_client import ClientDoesNotExist
