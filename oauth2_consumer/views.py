@@ -346,15 +346,16 @@ class TokenView(OAuthView):
             raise GrantTypeNotProvided()
     
     def verify_refresh_token(self):
+        from .exceptions.invalid_request import RefreshTokenNotProvided, RefreshTokenNotValid
         from .models import RefreshToken
         
         if self.refresh_token:
             try:
                 self.refresh_token = RefreshToken.objects.get(client=self.client, token=self.refresh_token)
             except RefreshToken.DoesNotExist:
-                raise
+                raise RefreshTokenNotValid()
         else:
-            raise
+            raise RefreshTokenNotProvided()
 
 
 def redirect_endpoint(request):
