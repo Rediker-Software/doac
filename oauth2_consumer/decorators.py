@@ -8,6 +8,11 @@ def scope_required(*scopes):
     
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
+            from oauth2_consumer.models import Scope
+            
+            if not hasattr(request, "access_token"):
+                raise
+            
             access_token = request.access_token
             
             for scope_name in scopes:
