@@ -47,3 +47,24 @@ class TestApprovalResponse(ApprovalTestCase):
         
         request = self.client.post(reverse("oauth2_approval") + "?code=%s" % (self.authorization_code.token, ), data)
         self.assertExceptionRedirect(request, AuthorizationDenied())
+    
+    def test_approved(self):
+        from oauth2_consumer.models import AuthorizationToken
+        import urllib
+        
+        self.client.login(username="test", password="test")
+        
+        data = {
+            "code": self.authorization_code.token,
+            "code_state": "o2cs",
+            "approve_access": None,
+        }
+        
+        request = self.client.post(reverse("oauth2_approval") + "?code=%s" % (self.authorization_code.token, ), data)
+        self.assertEqual(request.status_code, 302)
+        
+        args = {
+            "state": "o2cs",
+            "code": AuthorizationToken.objects.all()[0].token,
+        }
+        self.assertRedirects(request, self.redirect_uri.url + "?" + urllib.urlencode(args))
