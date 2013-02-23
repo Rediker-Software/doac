@@ -58,6 +58,18 @@ class TestTokenErrors(TokenTestCase):
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
         request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
         self.assertExceptionJson(request, AuthorizationCodeAlreadyUsed())
+    
+    def test_refresh_token(self):
+        from oauth2_consumer.exceptions.invalid_request import RefreshTokenNotProvided, RefreshTokenNotValid
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret})
+        self.assertExceptionJson(request, RefreshTokenNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "refresh_token": ""})
+        self.assertExceptionJson(request, RefreshTokenNotProvided())
+        
+        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "refresh_token": "invalid"})
+        self.assertExceptionJson(request, RefreshTokenNotValid())
 
 
 class TestTokenResponse(TokenTestCase):
