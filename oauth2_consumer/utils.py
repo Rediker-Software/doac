@@ -6,4 +6,17 @@ def prune_old_authorization_codes():
 
 
 def get_handler(handler_name):
-    pass
+    from .conf import options
+    
+    handlers = options.handlers
+    
+    for handler in handlers:
+        handler_path = handler.split(".")
+        name = handler_path[-2]
+        
+        if handler_name == name:
+            handler_module = __import__(".".join(handler_path[:-1]), {}, {}, str(handler_path[-1]))
+            
+            return getattr(handler_module, handler_path[-1])()
+    
+    return None
