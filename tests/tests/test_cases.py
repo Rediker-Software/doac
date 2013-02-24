@@ -80,3 +80,13 @@ class TokenTestCase(OAuthTestCase):
         
         self.authorization_token.scope = [self.scope]
         self.authorization_token.save()
+
+
+class DecoratorTestCase(OAuthTestCase):
+    
+    def setUp(self):
+        from django.test.client import RequestFactory
+        
+        super(DecoratorTestCase, self).setUp()
+        
+        self.factory = RequestFactory()
