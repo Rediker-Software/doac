@@ -94,3 +94,8 @@ class DecoratorTestCase(OAuthTestCase):
         
         self.authorization_token.scope = [self.scope]
         self.authorization_token.save()
+        
+        self.authorization_token.generate_refresh_token()
+        self.authorization_token.refresh_token.generate_access_token()
+        
+        self.access_token = self.authorization_token.refresh_token.access_tokens.all()[0]

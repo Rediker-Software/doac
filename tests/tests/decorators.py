@@ -10,12 +10,16 @@ class TestDecoratorErrors(DecoratorTestCase):
         
         self.assertEqual(response.status_code, 403)
         
-        self.authorization_token.generate_refresh_token()
-        self.authorization_token.refresh_token.generate_access_token()
+        response = self.client.get(reverse("no_args"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
         
-        access_token = self.authorization_token.refresh_token.access_tokens.all()[0]
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, "success")
+    
+    def test_scope_doesnt_exist(self):
+        response = self.client.get(reverse("scope_doesnt_exist"))
         
-        response = self.client.get(reverse("no_args"), HTTP_AUTHORIZATION="Bearer %s" % (access_token.token, ))
+        self.assertEqual(response.status_code, 403)
         
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.content, "success")
+        response = self.client.get(reverse("scope_doesnt_exist"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
+        
+        self.assertEqual(response.status_code, 403)
