@@ -4,6 +4,8 @@ HANDLERS = ("oauth2_consumer.handlers.bearer.BearerHandler", )
 class AuthenticationMiddleware:
     
     def process_request(self, request):
+        request.auth_type = None
+        
         http_authorization = request.META.get("HTTP_AUTHORIZATION", None)
         
         if not http_authorization:
@@ -13,6 +15,8 @@ class AuthenticationMiddleware:
         
         self.auth_type = auth[0].lower()
         self.auth_value = " ".join(auth[1:]).strip()
+        
+        request.auth_type = self.auth_type
         
         self.validate_auth_type()
         

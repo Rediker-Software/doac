@@ -99,3 +99,8 @@ class DecoratorTestCase(OAuthTestCase):
         self.authorization_token.refresh_token.generate_access_token()
         
         self.access_token = self.authorization_token.refresh_token.access_tokens.all()[0]
+
+
+class MiddlewareTestCase(OAuthTestCase):
+    
+    pass

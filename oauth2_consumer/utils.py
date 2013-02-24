@@ -3,3 +3,7 @@ def prune_old_authorization_codes():
     from .models import AuthorizationCode
     
     AuthorizationCode.objects.filter(expires_at__lt=timezone.now()).delete()
+
+
+def get_handler(handler_name):
+    pass
