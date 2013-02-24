@@ -25,15 +25,18 @@ class TestAuthorizationCodeModel(TestCase):
         self.assertEqual(unicode(self.token), self.token.token)
         
     def test_generate_refresh_token(self):
-        self.token.generate_refresh_token()
+        rt = self.token.generate_refresh_token()
         
         self.assertEqual(RefreshToken.objects.count(), 1)
+        self.assertIsInstance(rt, RefreshToken)
         
-        self.token.generate_refresh_token()
+        rt = self.token.generate_refresh_token()
         
         self.assertEqual(RefreshToken.objects.count(), 1)
+        self.assertIsNone(rt)
         
         self.token.is_active = True
-        self.token.generate_refresh_token()
+        rt = self.token.generate_refresh_token()
         
         self.assertEqual(RefreshToken.objects.count(), 1)
+        self.assertIsNone(rt)

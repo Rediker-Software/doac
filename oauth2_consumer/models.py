@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.db.models import signals
 from .conf import options
-from . import managers
 
 
 class AccessToken(models.Model):
