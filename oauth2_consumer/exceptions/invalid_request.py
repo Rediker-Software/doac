@@ -21,8 +21,12 @@ class ClientSecretNotProvided(InvalidRequest):
     reason = "The client secret was not provided."
 
 
+class CredentialsNotProvided(InvalidRequest):
+    reason = "No credentials were provided to authenticate the request to view this page."
+
+
 class RedirectUriDoesNotValidate(InvalidRequest):
-    reason = "The reidrect URI does not validate against the client host."
+    reason = "The redirect URI does not validate against the client host."
     can_redirect = False
 
 

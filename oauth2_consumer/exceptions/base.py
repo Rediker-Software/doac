@@ -2,6 +2,10 @@ class AccessDenied(Exception):
     error = "access_denied"
 
 
+class InsufficientScope(Exception):
+    error = "insufficient_scope"
+
+
 class InvalidClient(Exception):
     error = "invalid_client"
 

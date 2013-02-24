@@ -5,5 +5,5 @@ from . import views
 urlpatterns = patterns('',
     url(r"^oauth/", include(oauth_urls)),
     
-    url(r"^no_args/", views.no_args),
+    url(r"^no_args/", views.no_args, name="no_args"),
 )
