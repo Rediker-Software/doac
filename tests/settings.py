@@ -11,6 +11,14 @@ TEMPLATE_DEBUG = True
 
 ROOT_URLCONF = "tests.urls"
 
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "oauth2_consumer.middleware.AuthenticationMiddleware",
+)
+
 INSTALLED_APPS = [
     "django.contrib.auth",
     'django.contrib.contenttypes',

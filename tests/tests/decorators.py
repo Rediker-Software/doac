@@ -5,16 +5,6 @@ from .mock import TestFunc
 
 class TestDecoratorErrors(DecoratorTestCase):
     def test_test(self):
-        request = TestFunc()
-        response = scope_required(request)
+        response = self.client.get("/no_args/")
         
-        self.assertFalse(request.called)
-        
-        @scope_required
-        def view(request):
-            return HttpResponse()
-        
-        request = self.factory.get("/")
-        response = view(request)
-        
-        print response.status_code
+        print response
