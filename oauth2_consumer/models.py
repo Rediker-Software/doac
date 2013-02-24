@@ -90,7 +90,7 @@ class AuthorizationToken(models.Model):
             try:
                 temp = self.refresh_token
                 
-                return none
+                return None
             except RefreshToken.DoesNotExist:
                 self.refresh_token = RefreshToken()
                 
