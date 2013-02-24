@@ -103,4 +103,7 @@ class DecoratorTestCase(OAuthTestCase):
 
 class MiddlewareTestCase(OAuthTestCase):
     
-    pass
+    def setUp(self):
+        from django.test.client import RequestFactory
+        
+        self.factory = RequestFactory()
