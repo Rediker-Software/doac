@@ -85,8 +85,12 @@ class TokenTestCase(OAuthTestCase):
 class DecoratorTestCase(OAuthTestCase):
     
     def setUp(self):
-        from django.test.client import RequestFactory
-        
         super(DecoratorTestCase, self).setUp()
         
-        self.factory = RequestFactory()
+        self.client_secret = self.oauth_client.secret
+        
+        self.authorization_token = AuthorizationToken(user=self.user, client=self.oauth_client)
+        self.authorization_token.save()
+        
+        self.authorization_token.scope = [self.scope]
+        self.authorization_token.save()
