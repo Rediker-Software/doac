@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import signals
+from .conf import options
 from . import managers
 
 
@@ -35,7 +36,7 @@ class AccessToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(hours=2)
+        self.expires_at = timezone.now() + options.access_token["expires"]
         
         super(AccessToken, self).save(*args, **kwargs)
 
@@ -66,7 +67,7 @@ class AuthorizationCode(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(minutes=15)
+        self.expires_at = timezone.now() + options.auth_code["expires"]
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
@@ -125,7 +126,7 @@ class AuthorizationToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(minutes=15)
+        self.expires_at = timezone.now() + options.auth_token["expires"]
         
         super(AuthorizationToken, self).save(*args, **kwargs)
 
@@ -204,7 +205,7 @@ class RefreshToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + datetime.timedelta(days=60)
+        self.expires_at = timezone.now() + options.refresh_token["expires"]
         
         super(RefreshToken, self).save(*args, **kwargs)
 
