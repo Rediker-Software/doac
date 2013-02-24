@@ -32,7 +32,7 @@ if args.coverage:
     try:
         from coverage import coverage
 
-        cov = coverage()
+        cov = coverage(omit="tests*")
         cov.start()
     except ImportError:
         cov = None
