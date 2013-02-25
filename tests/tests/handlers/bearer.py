@@ -40,3 +40,14 @@ class TestBearerHandler(TestCase):
         token = self.handler.access_token("invalid", request)
         
         self.assertEqual(token, None)
+    
+    def test_authenticate(self):
+        request = self.factory.get("/")
+        
+        user = self.handler.authenticate(self.token.token, request)
+        
+        self.assertEqual(user, self.user)
+        
+        user = self.handler.authenticate("invalid", request)
+        
+        self.assertEqual(user, None)
