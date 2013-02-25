@@ -1,3 +1,4 @@
+from handlers import *
 from models import *
 from views import *
 from .decorators import *
