@@ -6,15 +6,30 @@
 Welcome to Django OAuth2 Consumer's documentation!
 ==================================================
 
-Contents:
+Django OAuth2 Consumer (DOAC) is a reusable application that can be used to provide an OAuth consumer for your project.
 
 .. toctree::
    :maxdepth: 2
 
    installation
    api
+   settings
 
 
+Requirements
+============
+
+Required
+--------
+
+- Django 1.5
+- Django `authentication application <https://docs.djangoproject.com/en/1.5/topics/auth/>`_
+- Python 2.7
+
+Optional
+--------
+
+- Django `admin application <https://docs.djangoproject.com/en/1.5/ref/contrib/admin/>`_
 
 Indices and tables
 ==================
@@ -22,4 +37,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
