@@ -282,10 +282,10 @@ class TokenView(OAuthView):
             return self.render_refresh_token()
     
     def render_authorization_token(self):
-        from django.utils import timezone
+        from .compat import now
         from .http import JsonResponse
         
-        remaining = self.refresh_token.expires_at - timezone.now()
+        remaining = self.refresh_token.expires_at - now()
         
         response = {}
         response["refresh_token"] = self.refresh_token.token
@@ -296,10 +296,10 @@ class TokenView(OAuthView):
         return JsonResponse(response)
     
     def render_refresh_token(self):
-        from django.utils import timezone
+        from .compat import now
         from .http import JsonResponse
         
-        remaining = self.access_token.expires_at - timezone.now()
+        remaining = self.access_token.expires_at - now()
         
         response = {}
         response["token_type"] = "bearer"
