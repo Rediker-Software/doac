@@ -1,8 +1,8 @@
 def prune_old_authorization_codes():
-    from django.utils import timezone
+    from .compat import now
     from .models import AuthorizationCode
     
-    AuthorizationCode.objects.filter(expires_at__lt=timezone.now()).delete()
+    AuthorizationCode.objects.filter(expires_at__lt=now()).delete()
 
 
 def get_handler(handler_name):

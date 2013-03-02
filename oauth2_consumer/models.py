@@ -31,13 +31,13 @@ class AccessToken(models.Model):
         self.save()
         
     def save(self, *args, **kwargs):
-        from django.utils import timezone
+        from .compat import now
         import datetime
         
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + options.access_token["expires"]
+        self.expires_at = now() + options.access_token["expires"]
         
         super(AccessToken, self).save(*args, **kwargs)
 
@@ -62,13 +62,13 @@ class AuthorizationCode(models.Model):
         return get_random_string(100)
         
     def save(self, *args, **kwargs):
-        from django.utils import timezone
+        from .compat import now
         import datetime
         
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + options.auth_code["expires"]
+        self.expires_at = now() + options.auth_code["expires"]
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
@@ -121,13 +121,13 @@ class AuthorizationToken(models.Model):
         self.refresh_token.revoke_tokens()
         
     def save(self, *args, **kwargs):
-        from django.utils import timezone
+        from .compat import now
         import datetime
         
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + options.auth_token["expires"]
+        self.expires_at = now() + options.auth_token["expires"]
         
         super(AuthorizationToken, self).save(*args, **kwargs)
 
@@ -200,13 +200,13 @@ class RefreshToken(models.Model):
             access_token.revoke()
     
     def save(self, *args, **kwargs):
-        from django.utils import timezone
+        from .compat import now
         import datetime
         
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = timezone.now() + options.refresh_token["expires"]
+        self.expires_at = now() + options.refresh_token["expires"]
         
         super(RefreshToken, self).save(*args, **kwargs)
 

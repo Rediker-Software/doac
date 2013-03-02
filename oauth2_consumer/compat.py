@@ -19,3 +19,12 @@ def get_user_model():
         from django.contrib.auth.models import User
         
         return User
+
+try:
+    from django.utils import timezone
+    
+    now = timezone.now
+except ImportError:
+    from datetime import datetime
+    
+    now = datetime.now
