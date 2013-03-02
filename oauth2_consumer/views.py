@@ -13,12 +13,6 @@ ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", )
 
 class OAuthView(View):
     
-    def check_get_parameters(self, *parameters):
-        for parameter in parameters:
-            if not self.request.GET.has_key(parameter):
-                return False
-        return True
-    
     def handle_exception(self, exception):
         can_redirect = getattr(exception, "can_redirect", True)
         redirect_uri = getattr(self, "redirect_uri", None)
@@ -118,11 +112,10 @@ class ApprovalView(OAuthView):
         self.scopes = self.authorization_code.scope.all()
         self.state = request.POST.get("code_state", None)
         
-        if request.POST.has_key("deny_access"):
+        if "deny_access" in request.POST:
             return self.authorization_denied()
         else:
             return self.authorization_accepted()
-    
     
     def authorization_accepted(self):
         from django.http import HttpResponseRedirect
@@ -138,12 +131,10 @@ class ApprovalView(OAuthView):
         
         return HttpResponseRedirect(self.redirect_uri.url + "?" + query_string)
         
-    
     def authorization_denied(self):
         from .exceptions.access_denied import AuthorizationDenied
         
         return self.redirect_exception(AuthorizationDenied())
-    
     
     def generate_query_string(self):
         from django.http import QueryDict
@@ -153,7 +144,6 @@ class ApprovalView(OAuthView):
         query["state"] = self.state
         
         return query.urlencode()
-    
     
     def verify_code(self):
         from .models import AuthorizationCode
@@ -199,7 +189,6 @@ class AuthorizeView(OAuthView):
         
         return TemplateResponse(request, "oauth2_consumer/authorize.html", context)
     
-    
     def generate_authorization_code(self):
         from .models import AuthorizationCode
         
@@ -211,7 +200,6 @@ class AuthorizeView(OAuthView):
         
         return code
     
-    
     def verify_response_type(self):
         from .exceptions.unsupported_response_type import ResponseTypeNotValid
         from .exceptions.invalid_request import ResponseTypeNotProvided
@@ -221,7 +209,6 @@ class AuthorizeView(OAuthView):
                 raise ResponseTypeNotValid()
         else:
             raise ResponseTypeNotProvided()
-    
     
     def verify_scope(self):
         from .models import Scope
