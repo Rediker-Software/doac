@@ -22,7 +22,7 @@ class AccessToken(models.Model):
         return self.token
     
     def generate_token(self):
-        from django.utils.crypto import get_random_string
+        from .compat import get_random_string
         
         return get_random_string(100)
     
@@ -57,7 +57,7 @@ class AuthorizationCode(models.Model):
         return self.token
     
     def generate_token(self):
-        from django.utils.crypto import get_random_string
+        from .compat import get_random_string
         
         return get_random_string(100)
         
@@ -110,7 +110,7 @@ class AuthorizationToken(models.Model):
         return None
     
     def generate_token(self):
-        from django.utils.crypto import get_random_string
+        from .compat import get_random_string
         
         return get_random_string(100)
     
@@ -142,7 +142,7 @@ class Client(models.Model):
         return self.name
     
     def generate_secret(self):
-        from django.utils.crypto import get_random_string
+        from .compat import get_random_string
         
         return get_random_string(50)
         
@@ -188,7 +188,7 @@ class RefreshToken(models.Model):
         return access_token
     
     def generate_token(self):
-        from django.utils.crypto import get_random_string
+        from .compat import get_random_string
         
         return get_random_string(100)
     
