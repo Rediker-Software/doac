@@ -43,29 +43,53 @@ class TestDecoratorErrors(DecoratorTestCase):
         self.assertEqual(response.content, "success")
     
     def test_has_scope(self):
-        response = self.client.get(reverse("has_scope"))
+        @scope_required("test")
+        def has_scope(request):
+            return HttpResponse("success")
+        
+        response = has_scope(self.request)
         
         self.assertEqual(response.status_code, 403)
         
-        response = self.client.get(reverse("has_scope"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
+        request = self.request
+        request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
+        self.mw.process_request(request)
+        
+        response = has_scope(request)
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, "success")
     
     def test_scope_doesnt_exist(self):
-        response = self.client.get(reverse("scope_doesnt_exist"))
+        @scope_required("invalid")
+        def scope_doesnt_exist(request):
+            return HttpResponse("success")
+        
+        response = scope_doesnt_exist(self.request)
         
         self.assertEqual(response.status_code, 403)
         
-        response = self.client.get(reverse("scope_doesnt_exist"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
+        request = self.request
+        request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
+        self.mw.process_request(request)
+        
+        response = scope_doesnt_exist(request)
         
         self.assertEqual(response.status_code, 403)
     
     def test_doesnt_have_all_scope(self):
-        response = self.client.get(reverse("doesnt_have_all_scope"))
+        @scope_required("test", "invalid")
+        def doesnt_have_all_scope(request):
+            return HttpResponse("success")
+        
+        response = doesnt_have_all_scope(self.request)
         
         self.assertEqual(response.status_code, 403)
         
-        response = self.client.get(reverse("doesnt_have_all_scope"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
+        request = self.request
+        request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
+        self.mw.process_request(request)
+        
+        response = doesnt_have_all_scope(self.request)
         
         self.assertEqual(response.status_code, 403)
