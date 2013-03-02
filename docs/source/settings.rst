@@ -10,9 +10,27 @@ HANDLERS
 ========
 **Optional**
 
+This setting controls which handlers are acceptable for users to authenticate with.  It should be specified as a tuple of strings which contain the full Python pathes to the middleware classes.  If this is empty, users are not going to be able to authenticate with your project.
+
+*Default*
+
+    "HANDLERS": (
+        "oauth2_consumer.handlers.bearer.BearerHandler",
+    )
+
 ACCESS_TOKEN
 ============
 **Optional**
+
+This setting controls the settings for access tokens.  It should be a dictionary containing any of the following keys:
+
+EXPIRES
+-------
+A timedelta object representing the time after the creation of the token when the access token will expire and become invalid.
+
+*Default*
+
+    datetime.timedelta(hours=2)
 
 AUTHORIZATION_CODE
 ==================
