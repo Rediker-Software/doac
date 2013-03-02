@@ -1,3 +1,5 @@
+
+
 HANDLERS = ("oauth2_consumer.handlers.bearer.BearerHandler", )
 
 
@@ -21,15 +23,15 @@ class AuthenticationMiddleware:
         self.validate_auth_type()
         
         if not self.handler_name:
-            raise
+            raise Exception("There is no handler defined for this authentication type.")
         
         self.load_handler()
         
         if not self.handler:
-            raise
+            raise Exception("The handler for this authentication type could not be loaded.")
         
         if not self.handler.validate(self.auth_value, request):
-            raise
+            raise Exception("The authentication token could not be validated.")
         
         request.access_token = self.handler.access_token(self.auth_value, request)
         request.user = self.handler.authenticate(self.auth_value, request)
