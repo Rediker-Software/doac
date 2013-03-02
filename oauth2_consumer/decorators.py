@@ -8,7 +8,6 @@ def scope_required(*scopes):
     
     def decorator(view_func):
     
-        @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
             from django.http import HttpResponseForbidden
             from oauth2_consumer.models import Scope
@@ -29,6 +28,8 @@ def scope_required(*scopes):
             
             return view_func(request, *args, **kwargs)
             
-        return _wrapped_view
+        return wraps(view_func, assigned=available_attrs(view_func))(_wrapped_view)
     
+    if scopes and hasattr(scopes[0], "__call__"):
+        return decorator(scopes[0])
     return decorator

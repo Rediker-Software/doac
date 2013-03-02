@@ -85,6 +85,8 @@ class TokenTestCase(OAuthTestCase):
 class DecoratorTestCase(OAuthTestCase):
     
     def setUp(self):
+        from django.http import HttpRequest
+        
         super(DecoratorTestCase, self).setUp()
         
         self.client_secret = self.oauth_client.secret
@@ -99,6 +101,8 @@ class DecoratorTestCase(OAuthTestCase):
         self.authorization_token.refresh_token.generate_access_token()
         
         self.access_token = self.authorization_token.refresh_token.access_tokens.all()[0]
+        
+        self.request = HttpRequest()
 
 
 class MiddlewareTestCase(OAuthTestCase):

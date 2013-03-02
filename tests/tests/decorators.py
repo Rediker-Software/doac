@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from oauth2_consumer.decorators import scope_required
 from .test_cases import DecoratorTestCase
 
@@ -6,7 +7,11 @@ from .test_cases import DecoratorTestCase
 class TestDecoratorErrors(DecoratorTestCase):
 
     def test_no_args(self):
-        response = self.client.get(reverse("no_args"))
+        @scope_required
+        def no_args(request):
+            return HttpResponse("success")
+            
+        response = no_args(self.request)
         
         self.assertEqual(response.status_code, 403)
         
