@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.db import models
 from .conf import options
+from .compat import get_user_model
+
+user_model = get_user_model()
 
 
 class AccessToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="access_tokens")
+    user = models.ForeignKey(user_model, related_name="access_tokens")
     client = models.ForeignKey("Client", related_name="access_tokens")
     
     refresh_token = models.ForeignKey("RefreshToken", related_name="access_tokens")
@@ -71,7 +74,7 @@ class AuthorizationCode(models.Model):
 
 
 class AuthorizationToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="authorization_tokens")
+    user = models.ForeignKey(user_model, related_name="authorization_tokens")
     client = models.ForeignKey("Client", related_name="authorization_tokens")
     token = models.CharField(max_length=100)
     scope = models.ManyToManyField("Scope", related_name="authorization_tokens")
@@ -161,7 +164,7 @@ class RedirectUri(models.Model):
 
 
 class RefreshToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="refresh_tokens")
+    user = models.ForeignKey(user_model, related_name="refresh_tokens")
     client = models.ForeignKey("Client", related_name="refresh_tokens")
     
     authorization_token = models.OneToOneField("AuthorizationToken", related_name="refresh_token")
