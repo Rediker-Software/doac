@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from .utils import total_seconds
 from . import utils
 
 
@@ -289,7 +290,7 @@ class TokenView(OAuthView):
         response = {}
         response["refresh_token"] = self.refresh_token.token
         response["token_type"] = "bearer"
-        response["expires_in"] = int(remaining.total_seconds())
+        response["expires_in"] = int(total_seconds(remaining))
         response["access_token"] = self.access_token.token
         
         return JsonResponse(response)
@@ -302,7 +303,7 @@ class TokenView(OAuthView):
         
         response = {}
         response["token_type"] = "bearer"
-        response["expires_in"] = int(remaining.total_seconds())
+        response["expires_in"] = int(total_seconds(remaining))
         response["access_token"] = self.access_token.token
         
         return JsonResponse(response)

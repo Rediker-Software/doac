@@ -20,3 +20,7 @@ def get_handler(handler_name):
             return getattr(handler_module, handler_path[-1])()
     
     return None
+
+
+def total_seconds(delta):
+    return delta.days * 86400 + delta.seconds
