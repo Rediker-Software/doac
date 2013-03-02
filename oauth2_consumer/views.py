@@ -104,7 +104,7 @@ class ApprovalView(OAuthView):
         
         try:
             self.verify_dictionary(request.POST, "code")
-        except Exception as e:
+        except Exception, e:
             return self.render_exception(e)
         
         self.client = self.authorization_code.client
@@ -174,7 +174,7 @@ class AuthorizeView(OAuthView):
         
         try:
             self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
-        except Exception as e:
+        except Exception, e:
             return self.handle_exception(e)
         
         code = self.generate_authorization_code()
@@ -240,13 +240,13 @@ class TokenView(OAuthView):
     def post(self, request, *args, **kwargs):
         try:
             self.verify_dictionary(request.POST, "grant_type", "client_id", "client_secret")
-        except Exception as e:
+        except Exception, e:
             return self.render_exception_js(e)
         
         if self.grant_type == "authorization_code":
             try:
                 self.verify_dictionary(request.POST, "code")
-            except Exception as e:
+            except Exception, e:
                 return self.render_exception_js(e)
             
             self.refresh_token = self.authorization_token.generate_refresh_token()
@@ -261,7 +261,7 @@ class TokenView(OAuthView):
         elif self.grant_type == "refresh_token":
             try:
                 self.verify_dictionary(request.POST, "refresh_token")
-            except Exception as e:
+            except Exception, e:
                 return self.render_exception_js(e)
             
             self.access_token = self.refresh_token.generate_access_token()
