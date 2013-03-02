@@ -1,6 +1,9 @@
 from django.core.urlresolvers import reverse
 from ..test_cases import TokenTestCase
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 
 class TestTokenErrors(TokenTestCase):
