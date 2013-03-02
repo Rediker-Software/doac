@@ -15,7 +15,11 @@ class TestDecoratorErrors(DecoratorTestCase):
         
         self.assertEqual(response.status_code, 403)
         
-        response = self.client.get(reverse("no_args"), HTTP_AUTHORIZATION="Bearer %s" % (self.access_token.token, ))
+        request = self.request
+        request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
+        self.mw.process_request(request)
+        
+        response = no_args(request)
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, "success")

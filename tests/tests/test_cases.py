@@ -86,6 +86,7 @@ class DecoratorTestCase(OAuthTestCase):
     
     def setUp(self):
         from django.http import HttpRequest
+        from oauth2_consumer.middleware import AuthenticationMiddleware
         
         super(DecoratorTestCase, self).setUp()
         
@@ -103,6 +104,7 @@ class DecoratorTestCase(OAuthTestCase):
         self.access_token = self.authorization_token.refresh_token.access_tokens.all()[0]
         
         self.request = HttpRequest()
+        self.mw = AuthenticationMiddleware()
 
 
 class MiddlewareTestCase(OAuthTestCase):
