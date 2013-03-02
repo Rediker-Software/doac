@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import sys
 
 parser = ArgumentParser(description="Run the test suite.")
 
@@ -50,8 +51,11 @@ TestRunner = get_runner(settings)
 
 runner = TestRunner(verbosity=1, interactive=args.interactive, failfast=args.failfast)
 
-runner.run_tests(["tests", ])
+failures = runner.run_tests(["tests", ])
 
 if cov:
     cov.stop()
     cov.html_report()
+
+if failures:
+    sys.exit(bool(failures))
