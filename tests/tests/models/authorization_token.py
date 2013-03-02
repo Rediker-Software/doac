@@ -3,7 +3,7 @@ from oauth2_consumer.models import AuthorizationToken, Client, RefreshToken, Sco
 from django.contrib.auth.models import User
 
 
-class TestAuthorizationCodeModel(TestCase):
+class TestAuthorizationTokenModel(TestCase):
 
     def setUp(self):
         self.oclient = Client(name="Test Client", access_host="http://localhost/")

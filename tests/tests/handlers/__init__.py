@@ -1,1 +1,1 @@
-from .bearer import *
+from .bearer import TestBearerHandler

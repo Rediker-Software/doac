@@ -1,3 +1,3 @@
-from .authorization_token import *
-from .client import *
-from .redirect_uri import *
+from .authorization_token import TestAuthorizationTokenModel
+from .client import TestClientModel
+from .redirect_uri import TestRedirectUriModel
