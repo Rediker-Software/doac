@@ -12,7 +12,7 @@ env:
 
 install:
   - "pip install -q Django==$DJANGO --use-mirrors"
-  - "pip install -r requirements.txt --use-mirrors"
+  - "pip install argparse coverage"
 
 script:
-  - runtests.py
+  - python runtests.py
