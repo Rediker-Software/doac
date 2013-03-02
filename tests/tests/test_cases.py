@@ -21,7 +21,10 @@ class OAuthTestCase(TestCase):
         self.assertEquals(request.status_code, 401)
     
     def assertExceptionJson(self, request, exception):
-        import json
+        try:
+            import simplejson as json
+        except ImportError:
+            import json
         
         data = {
             "error": exception.error,
