@@ -24,13 +24,13 @@ install:
   - "pip install -q $DJANGO --use-mirrors"
   - "pip install argparse"
   - "pip install pep8"
-  - "pip install simplejson"
+  - "python setup.py install"
 
 before_script:
   - "pep8 --ignore=E128,E501,W293 oauth2_consumer"
 
 script:
-  - python runtests.py
+  - "python runtests.py --no-coverage"
   
 notifications:
   email: false
