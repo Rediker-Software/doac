@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
-from oauth2_consumer.handlers.bearer import BearerHandler
-from oauth2_consumer.models import AuthorizationToken, Client, Scope
+from doac.handlers.bearer import BearerHandler
+from doac.models import AuthorizationToken, Client, Scope
 
 
 class TestBearerHandler(TestCase):

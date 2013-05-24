@@ -1,6 +1,6 @@
 
 
-HANDLERS = ("oauth2_consumer.handlers.bearer.BearerHandler", )
+HANDLERS = ("doac.handlers.bearer.BearerHandler", )
 
 
 class AuthenticationMiddleware:

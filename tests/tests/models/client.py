@@ -1,5 +1,5 @@
 from django.test import TestCase
-from oauth2_consumer.models import Client
+from doac.models import Client
 
 
 class TestClientModel(TestCase):

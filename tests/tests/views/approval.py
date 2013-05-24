@@ -5,7 +5,7 @@ from ..test_cases import ApprovalTestCase
 class TestApprovalErrors(ApprovalTestCase):
     
     def test_code(self):
-        from oauth2_consumer.exceptions.invalid_request import AuthorizationCodeNotValid, AuthorizationCodeNotProvided
+        from doac.exceptions.invalid_request import AuthorizationCodeNotValid, AuthorizationCodeNotProvided
         
         request = self.client.post(reverse("oauth2_approval"))
         self.assertExceptionRendered(request, AuthorizationCodeNotProvided())
@@ -37,7 +37,7 @@ class TestApprovalErrors(ApprovalTestCase):
 class TestApprovalResponse(ApprovalTestCase):
     
     def test_denied(self):
-        from oauth2_consumer.exceptions.access_denied import AuthorizationDenied
+        from doac.exceptions.access_denied import AuthorizationDenied
         
         data = {
             "code": self.authorization_code.token,
@@ -49,7 +49,7 @@ class TestApprovalResponse(ApprovalTestCase):
         self.assertExceptionRedirect(request, AuthorizationDenied())
     
     def test_approved(self):
-        from oauth2_consumer.models import AuthorizationToken
+        from doac.models import AuthorizationToken
         import urllib
         
         self.client.login(username="test", password="test")

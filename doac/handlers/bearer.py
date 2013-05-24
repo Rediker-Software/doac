@@ -1,4 +1,4 @@
-from oauth2_consumer.models import AccessToken
+from ..models import AccessToken
 
 
 class BearerHandler:

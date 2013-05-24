@@ -1,5 +1,5 @@
 from django.test import TestCase
-from oauth2_consumer.models import AuthorizationCode, AuthorizationToken, Client, RedirectUri, Scope
+from doac.models import AuthorizationCode, AuthorizationToken, Client, RedirectUri, Scope
 import urllib
 
 
@@ -89,7 +89,7 @@ class DecoratorTestCase(OAuthTestCase):
     
     def setUp(self):
         from django.http import HttpRequest
-        from oauth2_consumer.middleware import AuthenticationMiddleware
+        from doac.middleware import AuthenticationMiddleware
         
         super(DecoratorTestCase, self).setUp()
         

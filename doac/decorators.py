@@ -1,7 +1,7 @@
 from django.utils.decorators import available_attrs
 from functools import wraps
-from oauth2_consumer.exceptions.invalid_request import CredentialsNotProvided
-from oauth2_consumer.exceptions.insufficient_scope import ScopeNotEnough
+from .exceptions.invalid_request import CredentialsNotProvided
+from .exceptions.insufficient_scope import ScopeNotEnough
 
 
 def scope_required(*scopes):
@@ -11,7 +11,7 @@ def scope_required(*scopes):
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
             from django.http import HttpResponseForbidden
-            from oauth2_consumer.models import Scope
+            from .models import Scope
             
             try:
                 if not hasattr(request, "access_token"):

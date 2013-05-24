@@ -1,13 +1,13 @@
 from django.core.urlresolvers import reverse
-from oauth2_consumer.models import AuthorizationCode, Client, RedirectUri, Scope
+from doac.models import AuthorizationCode, Client, RedirectUri, Scope
 from ..test_cases import AuthorizeTestCase
 
 
 class TestAuthorizeErrors(AuthorizeTestCase):
     
     def test_client_id(self):
-        from oauth2_consumer.exceptions.invalid_request import ClientNotProvided
-        from oauth2_consumer.exceptions.invalid_client import ClientDoesNotExist
+        from doac.exceptions.invalid_request import ClientNotProvided
+        from doac.exceptions.invalid_client import ClientDoesNotExist
         
         request = self.client.get(reverse("oauth2_authorize"))
         self.assertExceptionRendered(request, ClientNotProvided())
@@ -19,7 +19,7 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         self.assertExceptionRendered(request, ClientDoesNotExist())
     
     def test_redirect_uri(self):
-        from oauth2_consumer.exceptions.invalid_request import RedirectUriNotProvided, RedirectUriDoesNotValidate
+        from doac.exceptions.invalid_request import RedirectUriNotProvided, RedirectUriDoesNotValidate
         
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s" % (self.oauth_client.id, ))
         self.assertExceptionRendered(request, RedirectUriNotProvided())
@@ -34,7 +34,7 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         self.assertExceptionRendered(request, RedirectUriDoesNotValidate())
     
     def test_scope(self):
-        from oauth2_consumer.exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
+        from doac.exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
         
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s" % (self.oauth_client.id, self.redirect_uri.url, ))
         self.assertExceptionRedirect(request, ScopeNotProvided())
@@ -46,8 +46,8 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         self.assertExceptionRedirect(request, ScopeNotValid())
     
     def test_response_type(self):
-        from oauth2_consumer.exceptions.invalid_request import ResponseTypeNotProvided
-        from oauth2_consumer.exceptions.unsupported_response_type import ResponseTypeNotValid
+        from doac.exceptions.invalid_request import ResponseTypeNotProvided
+        from doac.exceptions.unsupported_response_type import ResponseTypeNotValid
         
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
         self.assertExceptionRedirect(request, ResponseTypeNotProvided())

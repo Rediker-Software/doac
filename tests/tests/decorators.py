@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from oauth2_consumer.decorators import scope_required
+from doac.decorators import scope_required
 from .test_cases import DecoratorTestCase
 
 

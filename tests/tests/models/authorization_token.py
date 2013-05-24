@@ -1,6 +1,6 @@
 from django.test import TestCase
-from oauth2_consumer.models import AuthorizationToken, Client, RefreshToken, Scope
 from django.contrib.auth.models import User
+from doac.models import AuthorizationToken, Client, RefreshToken, Scope
 
 
 class TestAuthorizationTokenModel(TestCase):

@@ -3,7 +3,7 @@ try:
 except ImportError:
     from django.conf.urls.defaults import include, patterns, url
 
-from oauth2_consumer import urls as oauth_urls
+from doac import urls as oauth_urls
 from . import views
 
 urlpatterns = patterns('',

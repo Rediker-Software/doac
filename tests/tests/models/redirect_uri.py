@@ -1,5 +1,5 @@
 from django.test import TestCase
-from oauth2_consumer.models import Client, RedirectUri
+from doac.models import Client, RedirectUri
 
 
 class TestRedirectUriModel(TestCase):

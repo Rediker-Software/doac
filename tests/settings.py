@@ -16,14 +16,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    "oauth2_consumer.middleware.AuthenticationMiddleware",
+    "doac.middleware.AuthenticationMiddleware",
 )
 
 INSTALLED_APPS = [
     "django.contrib.auth",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    "oauth2_consumer",
+    "doac",
     "tests",
 ]
 
