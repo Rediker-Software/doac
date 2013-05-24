@@ -27,9 +27,6 @@ class AuthenticationMiddleware:
         
         self.load_handler()
         
-        if not self.handler:
-            raise Exception("The handler for this authentication type could not be loaded.")
-        
         if not self.handler.validate(self.auth_value, request):
             raise Exception("The authentication token could not be validated.")
         
@@ -37,9 +34,6 @@ class AuthenticationMiddleware:
         request.user = self.handler.authenticate(self.auth_value, request)
         
     def load_handler(self):
-        if not self.handler_name:
-            return
-        
         handler_path = self.handler_name.split(".")
         
         handler_module = __import__(".".join(handler_path[:-1]), {}, {}, str(handler_path[-1]))

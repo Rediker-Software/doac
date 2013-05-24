@@ -17,7 +17,12 @@ class TestMiddleware(MiddlewareTestCase):
         request = self.factory.get("/")
         request.META["HTTP_AUTHORIZATION"] = "type token"
         
-        self.assertRaises(Exception, lambda _: AuthenticationMiddleware().process_request(request))
+        try:
+            AuthenticationMiddleware().process_request(request)
+            
+            self.fail("Request was not rejected")
+        except Exception:
+            pass
         
         #self.assertEqual(request.auth_type, "type")
     
@@ -25,6 +30,11 @@ class TestMiddleware(MiddlewareTestCase):
         request = self.factory.get("/")
         request.META["HTTP_AUTHORIZATION"] = "bearer invalid"
         
-        self.assertRaises(Exception, lambda _: AuthenticationMiddleware().process_request(request))
+        try:
+            AuthenticationMiddleware().process_request(request)
+            
+            self.fail("Token was not rejected")
+        except Exception:
+            pass
         
         #self.assertEqual(request.auth_type, "bearer")
