@@ -25,9 +25,10 @@ install:
   - "pip install argparse"
   - "pip install pep8"
   - "python setup.py install"
+  - "pip install -r dev-requirements.txt"
 
 before_script:
-  - "pep8 --ignore=E128,E501,W293 oauth2_consumer"
+  - "pep8 --ignore=E128,E501,W293 doac"
 
 script:
   - "python runtests.py --no-coverage"
