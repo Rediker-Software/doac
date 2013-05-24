@@ -9,7 +9,7 @@ This project is in active development in the alpha stage.  It is not recommended
 ## What do I need to use this?
 - Django 1.5
 - Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
-- Python 2.7
+- Python 2.6+
 
 This plugin has not been tested on other configurations.  If it works with different requirements, or if a requirement is missing from the list, feel free to bring up an issue.
 

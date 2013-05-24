@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "2.5"
   - "2.6"
   - "2.7"
 
@@ -12,11 +11,6 @@ env:
   - DJANGO=https://github.com/django/django/tarball/master
 
 matrix:
-  exclude:
-    - env: DJANGO=Django==1.5
-      python: "2.5"
-    - env: DJANGO=https://github.com/django/django/tarball/master
-      python: "2.5"
   allow_failures:
     - env: DJANGO=https://github.com/django/django/tarball/master
 
