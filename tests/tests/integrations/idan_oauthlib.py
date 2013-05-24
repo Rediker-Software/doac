@@ -45,3 +45,19 @@ class TestOauthlib(ApprovalTestCase):
         data = self.libclient.parse_request_uri_response(response_uri, state="test_state")
         
         authorization_token = data["code"]
+        
+        request_body = self.libclient.prepare_request_body(
+            client_secret=self.oauth_client.secret,
+            code=authorization_token,
+        )
+        
+        post_dict = {}
+        
+        for pair in request_body.split('&'):
+            key, val = pair.split('=')
+            
+            post_dict[key] = val
+        
+        response = self.client.post(reverse("oauth2_token"), post_dict)
+        
+        data = self.libclient.parse_request_body_response(response.content)
