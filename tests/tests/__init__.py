@@ -1,3 +1,4 @@
+from integrations import *
 from handlers import *
 from models import *
 from views import *
