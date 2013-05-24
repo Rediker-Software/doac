@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 import os
-from oauth2_consumer import __version__
+from doac import __version__
 
 PACKAGE_DIR = os.path.abspath(os.path.dirname(__file__))
 os.chdir(PACKAGE_DIR)
