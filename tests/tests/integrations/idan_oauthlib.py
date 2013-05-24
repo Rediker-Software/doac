@@ -35,7 +35,12 @@ class TestOauthlib(ApprovalTestCase):
             "approve_access": None,
         })
         
-        response_uri = response.get("location").replace("http://", "https://")
+        response_uri = response.get("location", None)
+        
+        if not response_uri:
+            response_uri = response.META["HTTP_LOCATION"]
+        
+        response_uri = response_uri.replace("http://", "https://")
         
         data = self.libclient.parse_request_uri_response(response_uri, state="test_state")
         
