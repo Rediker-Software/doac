@@ -33,7 +33,7 @@ if args.coverage:
     try:
         from coverage import coverage
 
-        cov = coverage(omit="tests*")
+        cov = coverage(include="doac*")
         cov.start()
     except ImportError:
         cov = None
