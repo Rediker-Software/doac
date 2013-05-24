@@ -35,4 +35,8 @@ class TestOauthlib(ApprovalTestCase):
             "approve_access": None,
         })
         
-        authorization_token = AuthorizationToken.objects.all()[0]
+        response_uri = response.get("location").replace("http://", "https://")
+        
+        data = self.libclient.parse_request_uri_response(response_uri, state="test_state")
+        
+        authorization_token = data["code"]
