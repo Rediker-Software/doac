@@ -63,8 +63,10 @@ class TestBearerHandler(TestCase):
         
         self.assertNotEqual(response, None)
         self.assertEqual(response.status_code, 401)
+        self.assertEqual(response["WWW-Authenticate"], "Bearer realm=\"none\", error=\"invalid_token\"")
         
         response = self.handler.validate("", request)
         
         self.assertNotEqual(response, None)
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], "Bearer realm=\"none\", error=\"invalid_request\"")
