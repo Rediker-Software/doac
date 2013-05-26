@@ -1,13 +1,11 @@
-# Django OAuth2 Consumer (doac)
-
-[![Build Status](https://travis-ci.org/kevin-brown/doac.png?branch=master)](https://travis-ci.org/kevin-brown/doac)
+# Django OAuth2 Consumer (doac) [![Build Status](https://travis-ci.org/kevin-brown/doac.png?branch=master)](https://travis-ci.org/kevin-brown/doac)
 
 django-oauth2-consumer (DOAC) is a reusable application that can be used to provide an OAuth2 cosumer for your project.  It is based on [RFC 6749](http://tools.ietf.org/html/rfc6749) for the [OAuth2 authorization framework](http://oauth.net/2/).
 
 This project is in active development in the alpha stage.  It is not recommended for use in production and is not complete.
 
 ## What do I need to use this?
-- Django 1.5
+- Django 1.3+
 - Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
 - Python 2.6+
 
