@@ -27,8 +27,10 @@ class AuthenticationMiddleware:
         
         self.load_handler()
         
-        if not self.handler.validate(self.auth_value, request):
-            raise Exception("The authentication token could not be validated.")
+        response = self.handler.validate(self.auth_value, request)
+        
+        if response is not None:
+            return response
         
         request.access_token = self.handler.access_token(self.auth_value, request)
         request.user = self.handler.authenticate(self.auth_value, request)

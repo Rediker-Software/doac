@@ -4,7 +4,7 @@ from ..models import AccessToken
 class BearerHandler:
 
     def access_token(self, value, request):
-        if not self.validate(value, request):
+        if self.validate(value, request) is not None:
             return None
         
         access_token = AccessToken.objects.get(token=value)
@@ -12,7 +12,7 @@ class BearerHandler:
         return access_token
     
     def authenticate(self, value, request):
-        if not self.validate(value, request):
+        if self.validate(value, request) is not None:
             return None
         
         access_token = AccessToken.objects.get(token=value)
@@ -20,12 +20,15 @@ class BearerHandler:
         return access_token.user
     
     def validate(self, value, request):
+        from django.http import HttpResponseBadRequest
+        from doac.http import HttpResponseUnauthorized
+        
         if not value:
-            return False
+            return HttpResponseBadRequest()
         
         try:
             access_token = AccessToken.objects.get(token=value)
         except AccessToken.DoesNotExist:
-            return False
+            return HttpResponseUnauthorized()
         
-        return True
+        return None

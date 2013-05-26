@@ -57,12 +57,14 @@ class TestBearerHandler(TestCase):
         
         result = self.handler.validate(self.token.token, request)
         
-        self.assertTrue(result)
+        self.assertEqual(result, None)
         
-        result = self.handler.validate("invalid", request)
+        response = self.handler.validate("invalid", request)
         
-        self.assertFalse(result)
+        self.assertNotEqual(response, None)
+        self.assertEqual(response.status_code, 401)
         
-        result = self.handler.validate("", request)
+        response = self.handler.validate("", request)
         
-        self.assertFalse(result)
+        self.assertNotEqual(response, None)
+        self.assertEqual(response.status_code, 400)
