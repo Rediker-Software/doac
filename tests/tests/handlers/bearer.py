@@ -3,6 +3,7 @@ from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 from doac.handlers.bearer import BearerHandler
 from doac.models import AuthorizationToken, Client, Scope
+from doac.utils import request_error_header
 
 
 class TestBearerHandler(TestCase):
@@ -53,6 +54,9 @@ class TestBearerHandler(TestCase):
         self.assertEqual(user, None)
     
     def test_validate(self):
+        from doac.exceptions.base import InvalidToken
+        from doac.exceptions.invalid_request import CredentialsNotProvided
+        
         request = self.factory.get("/")
         
         result = self.handler.validate(self.token.token, request)
@@ -63,10 +67,10 @@ class TestBearerHandler(TestCase):
         
         self.assertNotEqual(response, None)
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response["WWW-Authenticate"], "Bearer realm=\"none\", error=\"invalid_token\"")
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(InvalidToken))
         
         response = self.handler.validate("", request)
         
         self.assertNotEqual(response, None)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response["WWW-Authenticate"], "Bearer realm=\"none\", error=\"invalid_request\"")
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))

@@ -22,5 +22,16 @@ def get_handler(handler_name):
     return None
 
 
+def request_error_header(exception):
+    from .conf import options
+    
+    header = "Bearer realm=\"%s\"" % (options.realm, )
+    
+    if hasattr(exception, "error"):
+        header = header + ", error=\"%s\"" % (exception.error, )
+    
+    return header
+
+
 def total_seconds(delta):
     return delta.days * 86400 + delta.seconds

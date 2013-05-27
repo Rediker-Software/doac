@@ -10,7 +10,8 @@ def scope_required(*scopes):
     
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
-            from django.http import HttpResponseForbidden
+            from django.http import HttpResponseBadRequest, HttpResponseForbidden
+            from .exceptions.base import InvalidRequest, InsufficientScope
             from .models import Scope
             
             try:
@@ -24,8 +25,14 @@ def scope_required(*scopes):
                         scope = access_token.scope.get(short_name=scope_name)
                     except Scope.DoesNotExist:
                         raise ScopeNotEnough()
-            except:
-                return HttpResponseForbidden("There was an error that prevented this request from continuing.")
+            except InvalidRequest:
+                response = HttpResponseBadRequest()
+                
+                return response
+            except InsufficientScope:
+                response = HttpResponseForbidden()
+                
+                return response
             
             return view_func(request, *args, **kwargs)
             

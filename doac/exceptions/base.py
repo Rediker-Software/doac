@@ -22,6 +22,10 @@ class InvalidScope(Exception):
     error = "invalid_scope"
 
 
+class InvalidToken(Exception):
+    error = "invalid_token"
+
+
 class UnsupportedGrantType(Exception):
     error = "unsupported_grant_type"
 

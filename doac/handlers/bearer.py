@@ -1,4 +1,7 @@
+from ..exceptions.base import InvalidToken
+from ..exceptions.invalid_request import CredentialsNotProvided
 from ..models import AccessToken
+from ..utils import request_error_header
 
 
 class BearerHandler:
@@ -23,11 +26,9 @@ class BearerHandler:
         from django.http import HttpResponseBadRequest
         from doac.http import HttpResponseUnauthorized
         
-        www_auth_header = "Bearer realm=\"%s\"" % ("none", )
-        
         if not value:
             response = HttpResponseBadRequest()
-            response["WWW-Authenticate"] = www_auth_header + ", error=\"invalid_request\""
+            response["WWW-Authenticate"] = request_error_header(CredentialsNotProvided)
             
             return response
         
@@ -35,7 +36,7 @@ class BearerHandler:
             access_token = AccessToken.objects.get(token=value)
         except AccessToken.DoesNotExist:
             response = HttpResponseUnauthorized()
-            response["WWW-Authenticate"] = www_auth_header + ", error=\"invalid_token\""
+            response["WWW-Authenticate"] = request_error_header(InvalidToken)
             
             return response
         

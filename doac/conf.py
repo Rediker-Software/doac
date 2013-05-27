@@ -12,6 +12,8 @@ class Settings:
                 "oauth2_consumer.handlers.bearer.BearerHandler",
             )
         
+        self.realm = options.get("REALM", "oauth")
+        
         self.access_token = options.get("ACCESS_TOKEN", {})
         self.setup_access_token()
         
