@@ -225,7 +225,7 @@ class RefreshToken(models.Model):
 
 
 class Scope(models.Model):
-    short_name = models.CharField(max_length=40)
+    short_name = models.CharField(max_length=40, unique=True)
     full_name = models.CharField(max_length=255)
     description = models.TextField()
     
