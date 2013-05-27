@@ -23,11 +23,20 @@ class AccessTokenManager(CustomManager):
 
 class AccessTokenQuerySet(QuerySet):
     
+    def for_token(self, token):
+        return self.get(token=token)
+    
     def is_active(self):
         return self.filter(is_active=True)
     
     def with_client(self, client):
         return self.filter(client=client.id)
+    
+    def with_refresh_token(self, refresh_token):
+        return self.filter(refresh_token=refresh_token.id)
+    
+    def with_user(self, user):
+        return self.filter(user=user.pk)
 
 
 class AuthorizationCodeManager(CustomManager):
@@ -38,11 +47,17 @@ class AuthorizationCodeManager(CustomManager):
 
 class AuthorizationCodeQuerySet(QuerySet):
     
+    def for_token(self, token):
+        return self.get(token=token)
+    
     def is_active(self):
         return self.filter(is_active=True)
     
     def with_client(self, client):
         return self.filter(client=client.id)
+    
+    def with_user(self, user):
+        return self.filter(user=user.pk)
 
 
 class AuthorizationTokenManager(CustomManager):
@@ -53,11 +68,17 @@ class AuthorizationTokenManager(CustomManager):
 
 class AuthorizationTokenQuerySet(QuerySet):
     
+    def for_token(self, token):
+        return self.get(token=token)
+    
     def is_active(self):
         return self.filter(is_active=True)
     
     def with_client(self, client):
         return self.filter(client=client.id)
+    
+    def with_user(self, user):
+        return self.filter(user=user.pk)
 
 
 class ClientManager(CustomManager):
@@ -70,6 +91,9 @@ class ClientQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+    
+    def with_secret(self, secret):
+        return self.filter(secret=secret)
 
 
 class RedirectUriManager(CustomManager):
@@ -92,6 +116,9 @@ class RefreshTokenManager(CustomManager):
 
 class RefreshTokenQuerySet(QuerySet):
     
+    def for_token(self, token):
+        return self.get(token=token)
+    
     def is_active(self):
         return self.filter(is_active=True)
     
@@ -100,6 +127,9 @@ class RefreshTokenQuerySet(QuerySet):
     
     def with_client(self, client):
         return self.filter(client=client.id)
+    
+    def with_user(self, user):
+        return self.filter(user=user.pk)
 
 
 class ScopeManager(CustomManager):
