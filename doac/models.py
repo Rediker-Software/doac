@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from .conf import options
 from .compat import get_user_model
+from . import managers
 
 user_model = get_user_model()
 
@@ -17,6 +18,8 @@ class AccessToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    
+    objects = managers.AccessTokenManager()
     
     def __unicode__(self):
         return self.token

@@ -13,3 +13,15 @@ class CustomManager(models.Manager):
         """
         
         return getattr(self.get_query_set(), name)
+
+
+class AccessTokenManager(CustomManager):
+    
+    def get_query_set(self):
+        return AccessTokenQuerySet(self.model)
+
+
+class AccessTokenQuerySet(QuerySet):
+    
+    def is_active(self):
+        return self.filter(active=True)
