@@ -1,6 +1,8 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from doac.exceptions.invalid_request import CredentialsNotProvided
 from doac.decorators import scope_required
+from doac.utils import request_error_header
 from .test_cases import DecoratorTestCase
 
 
@@ -14,6 +16,7 @@ class TestDecoratorErrors(DecoratorTestCase):
         response = no_args(self.request)
         
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))
         
         request = self.request
         request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
@@ -32,6 +35,7 @@ class TestDecoratorErrors(DecoratorTestCase):
         response = no_args(self.request)
         
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))
         
         request = self.request
         request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
@@ -50,6 +54,7 @@ class TestDecoratorErrors(DecoratorTestCase):
         response = has_scope(self.request)
         
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))
         
         request = self.request
         request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
@@ -68,6 +73,7 @@ class TestDecoratorErrors(DecoratorTestCase):
         response = scope_doesnt_exist(self.request)
         
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))
         
         request = self.request
         request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )
@@ -85,6 +91,7 @@ class TestDecoratorErrors(DecoratorTestCase):
         response = doesnt_have_all_scope(self.request)
         
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response["WWW-Authenticate"], request_error_header(CredentialsNotProvided))
         
         request = self.request
         request.META["HTTP_AUTHORIZATION"] = "Bearer %s" % (self.access_token.token, )

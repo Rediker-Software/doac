@@ -13,6 +13,7 @@ def scope_required(*scopes):
             from django.http import HttpResponseBadRequest, HttpResponseForbidden
             from .exceptions.base import InvalidRequest, InsufficientScope
             from .models import Scope
+            from .utils import request_error_header
             
             try:
                 if not hasattr(request, "access_token"):
@@ -25,9 +26,10 @@ def scope_required(*scopes):
                         scope = access_token.scope.get(short_name=scope_name)
                     except Scope.DoesNotExist:
                         raise ScopeNotEnough()
-            except InvalidRequest:
+            except InvalidRequest as e:
                 response = HttpResponseBadRequest()
-                
+                response["WWW-Authenticate"] = request_error_header(e)
+            
                 return response
             except InsufficientScope:
                 response = HttpResponseForbidden()
