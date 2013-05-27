@@ -31,8 +31,9 @@ def scope_required(*scopes):
                 response["WWW-Authenticate"] = request_error_header(e)
             
                 return response
-            except InsufficientScope:
+            except InsufficientScope as e:
                 response = HttpResponseForbidden()
+                response["WWW-Authenticate"] = request_error_header(e)
                 
                 return response
             
