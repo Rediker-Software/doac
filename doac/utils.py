@@ -30,6 +30,9 @@ def request_error_header(exception):
     if hasattr(exception, "error"):
         header = header + ", error=\"%s\"" % (exception.error, )
     
+    if hasattr(exception, "reason"):
+        header = header + ", error_description=\"%s\"" % (exception.reason, )
+    
     return header
 
 
