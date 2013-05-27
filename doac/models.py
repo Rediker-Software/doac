@@ -56,6 +56,8 @@ class AuthorizationCode(models.Model):
     expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
     
+    objects = managers.AuthorizationCodeManager()
+    
     def __unicode__(self):
         return self.token
     
@@ -85,6 +87,8 @@ class AuthorizationToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    
+    objects = managers.AuthorizationTokenManager()
     
     def __unicode__(self):
         return self.token
@@ -141,6 +145,8 @@ class Client(models.Model):
     access_host = models.URLField(max_length=255)
     is_active = models.BooleanField(default=True)
     
+    objects = managers.ClientManager()
+    
     def __unicode__(self):
         return self.name
     
@@ -158,6 +164,8 @@ class Client(models.Model):
 class RedirectUri(models.Model):
     client = models.ForeignKey("Client", related_name="redirect_uris")
     url = models.URLField(max_length=255)
+    
+    objects = managers.RedirectUriManager()
     
     class Meta:
         verbose_name = "redirect URI"
@@ -177,6 +185,8 @@ class RefreshToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    
+    objects = managers.RefreshTokenManager()
     
     def __unicode__(self):
         return self.token
@@ -218,3 +228,5 @@ class Scope(models.Model):
     short_name = models.CharField(max_length=40)
     full_name = models.CharField(max_length=255)
     description = models.TextField()
+    
+    objects = managers.ScopeManager()
