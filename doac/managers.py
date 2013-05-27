@@ -25,6 +25,9 @@ class AccessTokenQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+    
+    def with_client(self, client):
+        return self.filter(client=client.id)
 
 
 class AuthorizationCodeManager(CustomManager):
@@ -37,6 +40,9 @@ class AuthorizationCodeQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+    
+    def with_client(self, client):
+        return self.filter(client=client.id)
 
 
 class AuthorizationTokenManager(CustomManager):
@@ -49,6 +55,9 @@ class AuthorizationTokenQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+    
+    def with_client(self, client):
+        return self.filter(client=client.id)
 
 
 class ClientManager(CustomManager):
@@ -70,7 +79,9 @@ class RedirectUriManager(CustomManager):
 
 
 class RedirectUriQuerySet(QuerySet):
-    pass
+    
+    def with_client(self, client):
+        return self.filter(client=client.id)
 
 
 class RefreshTokenManager(CustomManager):
@@ -83,6 +94,12 @@ class RefreshTokenQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+    
+    def with_authorization_token(self, authorization_token):
+        return self.filter(authorization_token=authorization_token.id)
+    
+    def with_client(self, client):
+        return self.filter(client=client.id)
 
 
 class ScopeManager(CustomManager):
@@ -92,4 +109,6 @@ class ScopeManager(CustomManager):
 
 
 class ScopeQuerySet(QuerySet):
-    pass
+    
+    def for_short_name(self, name):
+        return self.get(short_name=name)
