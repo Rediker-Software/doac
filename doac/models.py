@@ -40,7 +40,8 @@ class AccessToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = now() + options.access_token["expires"]
+        if not self.expires_at:
+            self.expires_at = now() + options.access_token["expires"]
         
         super(AccessToken, self).save(*args, **kwargs)
 
@@ -73,7 +74,8 @@ class AuthorizationCode(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = now() + options.auth_code["expires"]
+        if not self.expires_at:
+            self.expires_at = now() + options.auth_code["expires"]
         
         super(AuthorizationCode, self).save(*args, **kwargs)
 
@@ -134,7 +136,8 @@ class AuthorizationToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = now() + options.auth_token["expires"]
+        if not self.expires_at:
+            self.expires_at = now() + options.auth_token["expires"]
         
         super(AuthorizationToken, self).save(*args, **kwargs)
 
@@ -156,7 +159,8 @@ class Client(models.Model):
         return get_random_string(50)
         
     def save(self, *args, **kwargs):
-        self.secret = self.generate_secret()
+        if not self.secret:
+            self.secret = self.generate_secret()
         
         super(Client, self).save(*args, **kwargs)
 
@@ -219,7 +223,8 @@ class RefreshToken(models.Model):
         if not self.token:
             self.token = self.generate_token()
         
-        self.expires_at = now() + options.refresh_token["expires"]
+        if not self.expires_at:
+            self.expires_at = now() + options.refresh_token["expires"]
         
         super(RefreshToken, self).save(*args, **kwargs)
 
