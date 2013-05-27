@@ -168,6 +168,8 @@ class AuthorizeView(OAuthView):
     http_method_names = ("get", "post", )
     
     def get(self, request, *args, **kwargs):
+        from django.contrib.auth.views import redirect_to_login
+        
         utils.prune_old_authorization_codes()
         
         self.state = request.GET.get("state", "o2cs")
@@ -176,6 +178,9 @@ class AuthorizeView(OAuthView):
             self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
         except Exception, e:
             return self.handle_exception(e)
+        
+        if not request.user.is_active:
+            return redirect_to_login(request.get_full_path())
         
         code = self.generate_authorization_code()
         

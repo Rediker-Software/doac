@@ -8,6 +8,7 @@ from . import views
 
 urlpatterns = patterns('',
     url(r"^oauth/", include(oauth_urls)),
+    url(r"^auth/", include("django.contrib.auth.urls")),
     
     url(r"^no_args/", views.no_args, name="no_args"),
     url(r"^has_scope/", views.has_scope, name="has_scope"),

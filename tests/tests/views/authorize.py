@@ -61,7 +61,16 @@ class TestAuthorizeErrors(AuthorizeTestCase):
 
 class TestAuthorizeResponse(AuthorizeTestCase):
     
+    def test_login_redirect(self):
+        auth_url = reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&response_type=token" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, )
+        
+        request = self.client.get(auth_url)
+        
+        self.assertEqual(request.status_code, 302)
+    
     def test_approval_form(self):
+        self.client.login(username="test", password="test")
+        
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&response_type=token" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
         
         self.assertTemplateUsed(request, "oauth2_consumer/authorize.html")
