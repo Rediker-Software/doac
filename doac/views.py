@@ -220,7 +220,7 @@ class AuthorizeView(OAuthView):
         from .exceptions.invalid_scope import ScopeNotProvided, ScopeNotValid
         
         if self.scope:
-            scopes = self.scope.split(",")
+            scopes = self.scope.split(" ")
             self.scopes = []
             
             for scope_name in scopes:
