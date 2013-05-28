@@ -1,10 +1,3 @@
-| .. toctree::
-|  :maxdepth: 2
-
-| installation
-|  api
-|  settings
-
 Welcome to Django OAuth2 Consumer's documentation!
 ==================================================
 
