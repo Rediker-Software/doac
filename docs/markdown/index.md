@@ -5,6 +5,10 @@ Django OAuth2 Consumer (DOAC) is a reusable application that can be used to prov
 
 * [Installation](installation.md)
 * [API](api.md)
+ * [Exceptions](exceptions/index.md)
+ * [Models](models/index.md)
+ * [Utilities](utilities/index.md)
+ * [Views](views/index.md)
 * [Settings](settings.md)
 
 Requirements
