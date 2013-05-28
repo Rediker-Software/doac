@@ -6,6 +6,6 @@ OAuth 2.0 solution for your project.
 
 -  `Exceptions <exceptions/index.md>`__
 -  `Models <models/index.md>`__
--  `Utilities <utilities/index.md>`__
+-  `Utilities <utilities.md>`__
 -  `Views <views/index.md>`__
 

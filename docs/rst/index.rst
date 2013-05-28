@@ -25,10 +25,10 @@ requirements.
 Required
 --------
 
--  Django 1.5
+-  Django 1.3+
 -  Django `authentication
    application <https://docs.djangoproject.com/en/1.5/topics/auth/>`__
--  Python 2.7
+-  Python 2.6+
 
 This application is directly compatible with other tools and
 applications, but if you aren't using them it shouldn't make a
@@ -52,7 +52,7 @@ example is always preferred, though we recognize that it is not always
 possible to provide one.
 
 The issue tracker is available here:
-https://github.com/kevin-brown/django-oauth2/issues
+https://github.com/kevin-brown/doac/issues
 
 Contributing
 ============

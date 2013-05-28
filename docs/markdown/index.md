@@ -19,9 +19,9 @@ We tried to make it so that this application did not require anything, but that 
 Required
 --------
 
--   Django 1.5
+-   Django 1.3+
 -   Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
--   Python 2.7
+-   Python 2.6+
 
 This application is directly compatible with other tools and applications, but if you aren't using them it shouldn't make a difference. We provide extra functionality by default if it makes sense to do so.
 
@@ -35,7 +35,7 @@ Getting Help
 
 If you find a bug, have an idea for a feature, or just need some guidance, we provide support through our GitHub repository. Just open up a new issue and make sure to include as much information as possible so we can try our best to determine the problem. A working test case or example is always preferred, though we recognize that it is not always possible to provide one.
 
-The issue tracker is available here: <https://github.com/kevin-brown/django-oauth2/issues>
+The issue tracker is available here: <https://github.com/kevin-brown/doac/issues>
 
 Contributing
 ============

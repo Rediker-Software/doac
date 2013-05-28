@@ -1,19 +1,25 @@
 Installation
 ============
 
-Django OAuth2 Consumer (DOAC) is not yet on PyPi, so you need to build
-it manually.
+Django OAuth2 Consumer (DOAC) is on PyPi!
+
+::
+
+    pip install doac
+
+You can still manually install DOAC, but it is recommended to install it
+using ``pip``.
 
 1. Copy DOAC Files
 ------------------
 
 Copy the files from GitHub into your project directory to a folder
-called ``oauth2_consumer``.
+called ``doac``.
 
 2. Add DOAC to your settings
 ----------------------------
 
-Add ``oauth2_consumer`` to your ``INSTALLED_APPS``.
+Add ``doac`` to your ``INSTALLED_APPS``.
 
 3. Set up the database
 ----------------------
