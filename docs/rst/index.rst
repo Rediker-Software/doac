@@ -8,7 +8,7 @@ to provide an OAuth consumer for your project.
 -  `API <api.md>`__
 -  `Exceptions <exceptions/index.md>`__
 -  `Models <models/index.md>`__
--  `Utilities <utilities/index.md>`__
+-  `Utilities <utilities.md>`__
 -  `Views <views/index.md>`__
 -  `Settings <settings.md>`__
 
