@@ -349,7 +349,3 @@ class TokenView(OAuthView):
                 raise RefreshTokenNotValid()
         else:
             raise RefreshTokenNotProvided()
-
-
-def redirect_endpoint(request):
-    return HttpResponse(repr(dict(request.GET)))

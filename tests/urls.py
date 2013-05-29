@@ -14,4 +14,6 @@ urlpatterns = patterns('',
     url(r"^has_scope/", views.has_scope, name="has_scope"),
     url(r"^scope_doesnt_exist/", views.scope_doesnt_exist, name="scope_doesnt_exist"),
     url(r"^doesnt_have_all_scope/", views.doesnt_have_all_scope, name="doesnt_have_all_scope"),
+    
+    url(r"^redirect_endpoint/", views.redirect_endpoint, name="redirect_endpoint"),
 )

@@ -16,3 +16,7 @@ def scope_doesnt_exist(request):
 @scope_required("test", "invalid")
 def doesnt_have_all_scope(request):
     return HttpResponse("success")
+
+
+def redirect_endpoint(request):
+    return HttpResponse(repr(dict(request.GET)))

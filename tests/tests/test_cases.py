@@ -52,7 +52,7 @@ class ApprovalTestCase(OAuthTestCase):
     def setUp(self):
         super(ApprovalTestCase, self).setUp()
         
-        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
+        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/redirect_endpoint/")
         self.redirect_uri.save()
         
         self.authorization_code = AuthorizationCode(client=self.oauth_client, redirect_uri=self.redirect_uri)
@@ -67,7 +67,7 @@ class AuthorizeTestCase(OAuthTestCase):
     def setUp(self):
         super(AuthorizeTestCase, self).setUp()
         
-        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/oauth/redirect_endpoint/")
+        self.redirect_uri = RedirectUri(client=self.oauth_client, url="http://localhost/redirect_endpoint/")
         self.redirect_uri.save()
 
 
