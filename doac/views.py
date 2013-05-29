@@ -129,7 +129,12 @@ class ApprovalView(OAuthView):
         
         query_string = self.generate_query_string()
         
-        return HttpResponseRedirect(self.redirect_uri.url + "?" + query_string)
+        if self.authorization_code.response_type == "code":
+            separator = "?"
+        else:
+            separator = "#"
+        
+        return HttpResponseRedirect(self.redirect_uri.url + separator + query_string)
         
     def authorization_denied(self):
         from .exceptions.access_denied import AuthorizationDenied
@@ -197,7 +202,7 @@ class AuthorizeView(OAuthView):
     def generate_authorization_code(self):
         from .models import AuthorizationCode
         
-        code = AuthorizationCode(client=self.client, redirect_uri=self.redirect_uri)
+        code = AuthorizationCode(client=self.client, redirect_uri=self.redirect_uri, response_type=self.response_type)
         code.save()
         
         code.scope = self.scopes

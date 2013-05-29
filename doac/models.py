@@ -52,6 +52,7 @@ class AuthorizationCode(models.Model):
     redirect_uri = models.ForeignKey("RedirectUri", related_name="authorization_codes")
     
     token = models.CharField(max_length=100)
+    response_type = models.CharField(choices=(("token", "token"), ("code", "code"), ), max_length=10)
     
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()

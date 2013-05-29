@@ -11,6 +11,9 @@ class TestOauthlib(ApprovalTestCase):
         super(TestOauthlib, self).setUp()
         
         self.libclient = WebApplicationClient(self.oauth_client.id)
+        
+        self.authorization_code.response_type = "code"
+        self.authorization_code.save()
     
     def test_flow(self):
         self.client.login(username="test", password="test")
