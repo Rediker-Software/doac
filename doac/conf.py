@@ -9,7 +9,7 @@ class Settings:
         
         if not self.handlers:
             self.handlers = (
-                "oauth2_consumer.handlers.bearer.BearerHandler",
+                "doac.handlers.bearer.BearerHandler",
             )
         
         self.realm = options.get("REALM", "oauth")
@@ -23,6 +23,9 @@ class Settings:
         self.auth_token = options.get("AUTHORIZATION_TOKEN", {})
         self.setup_auth_token()
         
+        self.client = options.get("CLIENT", {})
+        self.setup_client()
+        
         self.refresh_token = options.get("REFRESH_TOKEN", {})
         self.setup_refresh_token()
         
@@ -31,6 +34,7 @@ class Settings:
         token = {}
         
         token["expires"] = at.get("EXPIRES", datetime.timedelta(hours=2))
+        token["length"] = at.get("LENGTH", 100)
         
         self.access_token = token
     
@@ -39,6 +43,7 @@ class Settings:
         token = {}
         
         token["expires"] = ac.get("EXPIRES", datetime.timedelta(minutes=15))
+        token["length"] = ac.get("LENGTH", 100)
         
         self.auth_code = token
     
@@ -47,14 +52,24 @@ class Settings:
         token = {}
         
         token["expires"] = at.get("EXPIRES", datetime.timedelta(minutes=15))
+        token["length"] = at.get("LENGTH", 100)
         
         self.auth_token = token
+    
+    def setup_client(self):
+        cli = self.client
+        client = {}
+        
+        client["length"] = cli.get("LENGTH", 50)
+        
+        self.client = client
     
     def setup_refresh_token(self):
         rt = self.refresh_token
         token = {}
         
         token["expires"] = rt.get("EXPIRES", datetime.timedelta(days=60))
+        token["length"] = rt.get("LENGTH", 100)
         
         self.refresh_token = token
 

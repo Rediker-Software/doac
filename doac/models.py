@@ -12,7 +12,7 @@ class AccessToken(models.Model):
     client = models.ForeignKey("Client", related_name="access_tokens")
     
     refresh_token = models.ForeignKey("RefreshToken", related_name="access_tokens")
-    token = models.CharField(max_length=100)
+    token = models.CharField(max_length=options.access_token["length"])
     scope = models.ManyToManyField("Scope", related_name="access_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +27,7 @@ class AccessToken(models.Model):
     def generate_token(self):
         from .compat import get_random_string
         
-        return get_random_string(100)
+        return get_random_string(options.access_token["length"])
     
     def revoke(self):
         self.is_active = False
@@ -51,7 +51,7 @@ class AuthorizationCode(models.Model):
     scope = models.ManyToManyField("Scope", related_name="authorization_codes")
     redirect_uri = models.ForeignKey("RedirectUri", related_name="authorization_codes")
     
-    token = models.CharField(max_length=100)
+    token = models.CharField(max_length=options.auth_code["length"])
     response_type = models.CharField(choices=(("token", "token"), ("code", "code"), ), max_length=10)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -66,7 +66,7 @@ class AuthorizationCode(models.Model):
     def generate_token(self):
         from .compat import get_random_string
         
-        return get_random_string(100)
+        return get_random_string(options.auth_code["length"])
         
     def save(self, *args, **kwargs):
         from .compat import now
@@ -84,7 +84,7 @@ class AuthorizationCode(models.Model):
 class AuthorizationToken(models.Model):
     user = models.ForeignKey(user_model, related_name="authorization_tokens")
     client = models.ForeignKey("Client", related_name="authorization_tokens")
-    token = models.CharField(max_length=100)
+    token = models.CharField(max_length=options.auth_token["length"])
     scope = models.ManyToManyField("Scope", related_name="authorization_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -122,7 +122,7 @@ class AuthorizationToken(models.Model):
     def generate_token(self):
         from .compat import get_random_string
         
-        return get_random_string(100)
+        return get_random_string(options.auth_token["length"])
     
     def revoke_tokens(self):
         self.is_active = False
@@ -145,7 +145,7 @@ class AuthorizationToken(models.Model):
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
-    secret = models.CharField(max_length=50)
+    secret = models.CharField(max_length=options.client["length"])
     access_host = models.URLField(max_length=255)
     is_active = models.BooleanField(default=True)
     
@@ -157,7 +157,7 @@ class Client(models.Model):
     def generate_secret(self):
         from .compat import get_random_string
         
-        return get_random_string(50)
+        return get_random_string(options.client["length"])
         
     def save(self, *args, **kwargs):
         if not self.secret:
@@ -184,7 +184,7 @@ class RefreshToken(models.Model):
     client = models.ForeignKey("Client", related_name="refresh_tokens")
     
     authorization_token = models.OneToOneField("AuthorizationToken", related_name="refresh_token")
-    token = models.CharField(max_length=100)
+    token = models.CharField(max_length=options.refresh_token["length"])
     scope = models.ManyToManyField("Scope", related_name="refresh_tokens")
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -208,7 +208,7 @@ class RefreshToken(models.Model):
     def generate_token(self):
         from .compat import get_random_string
         
-        return get_random_string(100)
+        return get_random_string(options.refresh_token["length"])
     
     def revoke_tokens(self):
         self.is_active = False
