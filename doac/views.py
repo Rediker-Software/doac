@@ -23,7 +23,7 @@ class OAuthView(View):
     
     def redirect_exception(self, exception):
         from django.http import QueryDict, HttpResponseRedirect
-        
+
         query = QueryDict("").copy()
         query["error"] = exception.error
         query["error_description"] = exception.reason
@@ -33,7 +33,7 @@ class OAuthView(View):
     
     def render_exception(self, exception):
         from .http import HttpResponseUnauthorized
-        
+
         return HttpResponseUnauthorized(exception.reason)
     
     def render_exception_js(self, exception):
@@ -87,7 +87,7 @@ class OAuthView(View):
                     raise RedirectUriDoesNotValidate()
             
             try:
-                self.redirect_uri = RedirectUri.objects.with_client(self.client).for_uri(self.redirect_uri)
+                self.redirect_uri = RedirectUri.objects.with_client(self.client).for_url(self.redirect_uri)
             except RedirectUri.DoesNotExist:
                 raise RedirectUriDoesNotValidate()
         else:
@@ -166,7 +166,7 @@ class ApprovalView(OAuthView):
                 raise AuthorizationCodeNotValid()
             
             try:
-                self.authorization_code = AuthorizationCode.objects.for_code(self.code)
+                self.authorization_code = AuthorizationCode.objects.for_token(self.code)
             except AuthorizationCode.DoesNotExist:
                 raise AuthorizationCodeNotValid()
         else:

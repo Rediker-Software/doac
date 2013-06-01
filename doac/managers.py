@@ -111,7 +111,7 @@ class RedirectUriManager(CustomManager):
 class RedirectUriQuerySet(QuerySet):
 
     def for_url(self, url):
-        return self.filter(url=url)
+        return self.get(url=url)
 
     def with_client(self, client):
         return self.filter(client=client.id)
