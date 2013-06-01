@@ -23,7 +23,7 @@ def scope_required(*scopes):
                 
                 for scope_name in scopes:
                     try:
-                        scope = access_token.scope.get(short_name=scope_name)
+                        scope = access_token.scope.for_short_name(scope_name)
                     except Scope.DoesNotExist:
                         raise ScopeNotEnough()
             except InvalidRequest as e:

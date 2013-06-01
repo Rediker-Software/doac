@@ -10,7 +10,7 @@ class BearerHandler:
         if self.validate(value, request) is not None:
             return None
         
-        access_token = AccessToken.objects.get(token=value)
+        access_token = AccessToken.objects.for_token(value)
         
         return access_token
     
@@ -18,7 +18,7 @@ class BearerHandler:
         if self.validate(value, request) is not None:
             return None
         
-        access_token = AccessToken.objects.get(token=value)
+        access_token = AccessToken.objects.for_token(value)
         
         return access_token.user
     
@@ -33,7 +33,7 @@ class BearerHandler:
             return response
         
         try:
-            access_token = AccessToken.objects.get(token=value)
+            access_token = AccessToken.objects.for_token(value)
         except AccessToken.DoesNotExist:
             response = HttpResponseUnauthorized()
             response["WWW-Authenticate"] = request_error_header(InvalidToken)
