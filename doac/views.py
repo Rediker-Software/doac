@@ -126,12 +126,14 @@ class ApprovalView(OAuthView):
         self.authorization_token.scope = self.scopes
         self.authorization_token.save()
         
-        query_string = self.generate_query_string()
-        
         if self.authorization_code.response_type == "code":
             separator = "?"
         else:
             separator = "#"
+
+            self.access_token = self.authorization_token.generate_refresh_token().generate_access_token()
+
+        query_string = self.generate_query_string()
         
         return HttpResponseRedirect(self.redirect_uri.url + separator + query_string)
         
@@ -144,8 +146,12 @@ class ApprovalView(OAuthView):
         from django.http import QueryDict
         
         query = QueryDict("").copy()
-        query["code"] = self.authorization_token.token
         query["state"] = self.state
+
+        if self.authorization_code.response_type == "token":
+            query["code"] = self.access_token.token
+        else:
+            query["code"] = self.authorization_token.token
         
         return query.urlencode()
     

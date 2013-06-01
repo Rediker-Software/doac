@@ -73,7 +73,7 @@ class TestApprovalResponse(ApprovalTestCase):
         self.assertRedirects(request, self.redirect_uri.url + "?" + urllib.urlencode(args))
     
     def test_approved_token(self):
-        from doac.models import AuthorizationToken
+        from doac.models import AccessToken
         import urllib
         
         self.client.login(username="test", password="test")
@@ -92,6 +92,6 @@ class TestApprovalResponse(ApprovalTestCase):
         
         args = {
             "state": "o2cs",
-            "code": AuthorizationToken.objects.all()[0].token,
+            "code": AccessToken.objects.all()[0].token,
         }
         self.assertRedirects(request, self.redirect_uri.url + "#" + urllib.urlencode(args))
