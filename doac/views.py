@@ -60,7 +60,7 @@ class OAuthView(View):
         
         if self.client_id:
             try:
-                self.client = Client.objects.get(id=self.client_id)
+                self.client = Client.objects.for_id(self.client_id)
             except Client.DoesNotExist:
                 raise ClientDoesNotExist()
         else:
@@ -87,7 +87,7 @@ class OAuthView(View):
                     raise RedirectUriDoesNotValidate()
             
             try:
-                self.redirect_uri = RedirectUri.objects.get(client=self.client, url=self.redirect_uri)
+                self.redirect_uri = RedirectUri.objects.with_client(self.client).for_uri(self.redirect_uri)
             except RedirectUri.DoesNotExist:
                 raise RedirectUriDoesNotValidate()
         else:
@@ -166,7 +166,7 @@ class ApprovalView(OAuthView):
                 raise AuthorizationCodeNotValid()
             
             try:
-                self.authorization_code = AuthorizationCode.objects.get(token=self.code)
+                self.authorization_code = AuthorizationCode.objects.for_code(self.code)
             except AuthorizationCode.DoesNotExist:
                 raise AuthorizationCodeNotValid()
         else:
@@ -235,7 +235,7 @@ class AuthorizeView(OAuthView):
             
             for scope_name in scopes:
                 try:
-                    scope = Scope.objects.get(short_name=scope_name)
+                    scope = Scope.objects.for_short_name(scope_name)
                 except Scope.DoesNotExist:
                     raise ScopeNotValid()
                 
@@ -326,7 +326,7 @@ class TokenView(OAuthView):
         
         if self.code:
             try:
-                self.authorization_token = AuthorizationToken.objects.get(client=self.client, token=self.code)
+                self.authorization_token = AuthorizationToken.objects.with_client(self.client).for_token(self.code)
                 
                 if not self.authorization_token.is_active:
                     self.authorization_token.revoke_tokens()
@@ -354,7 +354,7 @@ class TokenView(OAuthView):
         
         if self.refresh_token:
             try:
-                self.refresh_token = RefreshToken.objects.get(client=self.client, token=self.refresh_token)
+                self.refresh_token = RefreshToken.objects.with_client(self.client).for_token(self.refresh_token)
             except RefreshToken.DoesNotExist:
                 raise RefreshTokenNotValid()
         else:

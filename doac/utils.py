@@ -2,7 +2,7 @@ def prune_old_authorization_codes():
     from .compat import now
     from .models import AuthorizationCode
     
-    AuthorizationCode.objects.filter(expires_at__lt=now()).delete()
+    AuthorizationCode.objects.with_expiration_before(now()).delete()
 
 
 def get_handler(handler_name):
