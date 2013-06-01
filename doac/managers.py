@@ -52,6 +52,9 @@ class AuthorizationCodeQuerySet(QuerySet):
     
     def is_active(self):
         return self.filter(is_active=True)
+
+    def with_expiration_before(self, date):
+        return self.filter(expires_at__lt=date)
     
     def with_client(self, client):
         return self.filter(client=client.id)
@@ -88,12 +91,15 @@ class ClientManager(CustomManager):
 
 
 class ClientQuerySet(QuerySet):
+
+    def for_id(self, id):
+        return self.get(id=id)
+
+    def for_secret(self, secret):
+        return self.get(secret=secret)
     
     def is_active(self):
         return self.filter(is_active=True)
-    
-    def with_secret(self, secret):
-        return self.filter(secret=secret)
 
 
 class RedirectUriManager(CustomManager):
@@ -103,7 +109,10 @@ class RedirectUriManager(CustomManager):
 
 
 class RedirectUriQuerySet(QuerySet):
-    
+
+    def for_url(self, url):
+        return self.filter(url=url)
+
     def with_client(self, client):
         return self.filter(client=client.id)
 
