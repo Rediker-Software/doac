@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from .conf import options
 from .compat import get_user_model
@@ -35,7 +34,6 @@ class AccessToken(models.Model):
         
     def save(self, *args, **kwargs):
         from .compat import now
-        import datetime
         
         if not self.token:
             self.token = self.generate_token()
@@ -70,7 +68,6 @@ class AuthorizationCode(models.Model):
         
     def save(self, *args, **kwargs):
         from .compat import now
-        import datetime
         
         if not self.token:
             self.token = self.generate_token()
@@ -132,7 +129,6 @@ class AuthorizationToken(models.Model):
         
     def save(self, *args, **kwargs):
         from .compat import now
-        import datetime
         
         if not self.token:
             self.token = self.generate_token()
@@ -219,7 +215,6 @@ class RefreshToken(models.Model):
     
     def save(self, *args, **kwargs):
         from .compat import now
-        import datetime
         
         if not self.token:
             self.token = self.generate_token()

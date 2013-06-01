@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
