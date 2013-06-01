@@ -196,7 +196,7 @@ class AuthorizeView(OAuthView):
             "state": self.state,
         }
         
-        return TemplateResponse(request, "oauth2_consumer/authorize.html", context)
+        return TemplateResponse(request, "doac/authorize.html", context)
     
     def generate_authorization_code(self):
         from .models import AuthorizationCode

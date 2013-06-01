@@ -29,7 +29,7 @@ class TestRauth(ApprovalTestCase):
         response = self.client.get(authorization_url)
         
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "oauth2_consumer/authorize.html")
+        self.assertTemplateUsed(response, "doac/authorize.html")
         
         approval_url = reverse("oauth2_approval") + "?code=" + self.authorization_code.token
         

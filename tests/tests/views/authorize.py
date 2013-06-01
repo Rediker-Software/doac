@@ -74,7 +74,7 @@ class TestAuthorizeResponse(AuthorizeTestCase):
         for response_type in ["token", "code", ]:
             request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&response_type=code" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
             
-            self.assertTemplateUsed(request, "oauth2_consumer/authorize.html")
+            self.assertTemplateUsed(request, "doac/authorize.html")
             
             self.assertEqual(request.context["authorization_code"], AuthorizationCode.objects.latest("id"))
             self.assertEqual(request.context["client"], self.oauth_client)
