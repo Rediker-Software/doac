@@ -13,6 +13,12 @@ def get_random_string(length=12, allowed_chars='abcdefghijklmnopqrstuvwxyz'
 
 
 def get_user_model():
+    """
+    Get the user model that is being used.  If the `get_user_model` method
+    is not available, default back to the standard User model provided
+    through `django.contrib.auth`.
+    """
+
     try:
         from django.contrib.auth import get_user_model
         
