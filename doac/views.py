@@ -11,8 +11,23 @@ ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", )
 
 
 class OAuthView(View):
+    """
+    All views must subclass this class.
+
+    This provides common methods which are needed for validation and processing OAuth
+    requests and responses.
+    """
     
     def handle_exception(self, exception):
+        """
+        Handle a unspecified exception and return the correct method that should be used
+        for handling it.
+
+        If the exception has the `can_redirect` property set to False, it is
+        rendered to the browser.  Otherwise, it will be redirected to the location
+        provided in the `RedirectUri` object that is associated with the request.
+        """
+
         can_redirect = getattr(exception, "can_redirect", True)
         redirect_uri = getattr(self, "redirect_uri", None)
         
@@ -22,6 +37,11 @@ class OAuthView(View):
             return self.render_exception(exception)
     
     def redirect_exception(self, exception):
+        """
+        Build the query string for the exception and return a redirect to the
+        redirect uri that was associated with the request.
+        """
+
         from django.http import QueryDict, HttpResponseRedirect
 
         query = QueryDict("").copy()
@@ -32,11 +52,19 @@ class OAuthView(View):
         return HttpResponseRedirect(self.redirect_uri.url + "?" + query.urlencode())
     
     def render_exception(self, exception):
+        """
+        Return a 401 response with the body being the reason for the exception.
+        """
+
         from .http import HttpResponseUnauthorized
 
         return HttpResponseUnauthorized(exception.reason)
     
     def render_exception_js(self, exception):
+        """
+        Return a 200 response with the body containing a JSON-formatter version of the exception.
+        """
+
         from .http import JsonResponse
         
         response = {}
@@ -46,6 +74,15 @@ class OAuthView(View):
         return JsonResponse(response)
         
     def verify_dictionary(self, dict, *args):
+        """
+        Based on a provided `dict`, validate all of the contents of that dictionary that are
+        provided.
+
+        For each argument provided that isn't the dictionary, this will set the raw value of
+        that key as the instance variable of the same name.  It will then call the verification
+        function named `verify_[argument]` to verify the data.
+        """
+
         for arg in args:
             setattr(self, arg, dict.get(arg, None))
             
@@ -54,6 +91,13 @@ class OAuthView(View):
                 func()
     
     def verify_client_id(self):
+        """
+        Verify a provided client id against the database and set the `Client` object that is
+        associated with it to `self.client`.
+
+        TODO: Document all of the thrown exceptions.
+        """
+
         from .models import Client
         from .exceptions.invalid_client import ClientDoesNotExist
         from .exceptions.invalid_request import ClientNotProvided
