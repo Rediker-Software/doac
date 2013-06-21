@@ -6,6 +6,13 @@ HANDLERS = ("doac.handlers.bearer.BearerHandler", )
 class AuthenticationMiddleware:
     
     def process_request(self, request):
+        """
+        Try to authenticate the user based on any given tokens that have been provided
+        to the request object.  This will try to detect the authentication type and assign
+        the detected User object to the `request.user` variable, similar to the standard
+        Django authentication.
+        """
+
         request.auth_type = None
         
         http_authorization = request.META.get("HTTP_AUTHORIZATION", None)
@@ -36,12 +43,21 @@ class AuthenticationMiddleware:
         request.user = self.handler.authenticate(self.auth_value, request)
         
     def load_handler(self):
+        """
+        Load the detected handler.
+        """
+
         handler_path = self.handler_name.split(".")
         
         handler_module = __import__(".".join(handler_path[:-1]), {}, {}, str(handler_path[-1]))
         self.handler = getattr(handler_module, handler_path[-1])()
     
     def validate_auth_type(self):
+        """
+        Validate the detected authorization type against the list of handlers.  This will return the full
+        module path to the detected handler.
+        """
+
         for handler in HANDLERS:
             handler_type = handler.split(".")[-2]
             

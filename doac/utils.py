@@ -1,4 +1,8 @@
 def prune_old_authorization_codes():
+    """
+    Removes all unused and expired authorization codes from the database.
+    """
+
     from .compat import now
     from .models import AuthorizationCode
     
@@ -6,6 +10,10 @@ def prune_old_authorization_codes():
 
 
 def get_handler(handler_name):
+    """
+    Imports the module for a DOAC handler based on the string representation of the module path that is provided.
+    """
+
     from .conf import options
     
     handlers = options.handlers
@@ -23,6 +31,10 @@ def get_handler(handler_name):
 
 
 def request_error_header(exception):
+    """
+    Generates the error header for a request using a Bearer token based on a given OAuth exception.
+    """
+
     from .conf import options
     
     header = "Bearer realm=\"%s\"" % (options.realm, )
@@ -37,4 +49,9 @@ def request_error_header(exception):
 
 
 def total_seconds(delta):
+    """
+    Get the total seconds that a `datetime.timedelta` object covers.  Used for returning the total
+    time until a token expires during the handshake process.
+    """
+
     return delta.days * 86400 + delta.seconds

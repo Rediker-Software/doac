@@ -5,6 +5,34 @@ from .exceptions.insufficient_scope import ScopeNotEnough
 
 
 def scope_required(*scopes):
+    """
+    Test for specific scopes that the access token has been authenticated for before
+    processing the request and eventual response.
+
+    The scopes that are passed in determine how the decorator will respond to incoming
+    requests:
+
+    - If no scopes are passed in the arguments, the decorator will test for any available
+      scopes and determine the response based on that.
+
+    - If specific scopes are passed, the access token will be checked to make sure it has
+      all of the scopes that were requested.
+
+    This decorator will change the response if the access toke does not have the scope:
+
+    - If an invalid scope is requested (one that does not exist), all requests will be
+      denied, as no access tokens will be able to fulfill the scope request and the
+      request will be denied.
+
+    - If the access token does not have one of the requested scopes, the request will be
+      denied and the user will be returned one of two responses:
+
+      - A 400 response (Bad Request) will be returned if an unauthenticated user tries to
+        access the resource.
+
+      - A 403 response (Forbidden) will be returned if an authenticated user ties to access
+        the resource but does not have the correct scope.
+    """
     
     def decorator(view_func):
     

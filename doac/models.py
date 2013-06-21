@@ -29,6 +29,10 @@ class AccessToken(models.Model):
         return get_random_string(options.access_token["length"])
     
     def revoke(self):
+        """
+        Revokes an individual access token.  This prevents the access token from being used in any future requests.
+        """
+
         self.is_active = False
         self.save()
         
@@ -122,6 +126,10 @@ class AuthorizationToken(models.Model):
         return get_random_string(options.auth_token["length"])
     
     def revoke_tokens(self):
+        """
+        Revoke the authorization token and all tokens that were generated using it.
+        """
+
         self.is_active = False
         self.save()
         
@@ -207,6 +215,10 @@ class RefreshToken(models.Model):
         return get_random_string(options.refresh_token["length"])
     
     def revoke_tokens(self):
+        """
+        Revokes the refresh token and all access tokens that were generated using it.
+        """
+
         self.is_active = False
         self.save()
         
