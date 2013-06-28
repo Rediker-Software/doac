@@ -1,4 +1,4 @@
-from rest_framework import authentication
+from rest_framework import authentication, exceptions
 
 
 class DoacAuthentication(authentication.BaseAuthentication):
@@ -11,7 +11,16 @@ class DoacAuthentication(authentication.BaseAuthentication):
 
         from doac.middleware import AuthenticationMiddleware
 
-        AuthenticationMiddleware().process_request(request._request)
+        try:
+            response = AuthenticationMiddleware().process_request(request._request)
+        except:
+            raise exceptions.AuthenticationFailed("Invalid handler")
+
+        if not hasattr(request._request, "user") or not request._request.user.is_authenticated():
+            raise exceptions.AuthenticationFailed("Could not authenticate")
+
+        if not hasattr(request._request, "access_token"):
+            raise exceptions.AuthenticationFailed("Access token was not valid")
 
         return request._request.user, request._request.access_token
 
@@ -20,4 +29,6 @@ class DoacAuthentication(authentication.BaseAuthentication):
         DOAC specifies the realm as Bearer by default.
         """
 
-        return 'Bearer realm="%s"' % self.www_authenticate_realm
+        from doac.conf import options
+
+        return 'Bearer realm="%s"' % options.realm
