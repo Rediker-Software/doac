@@ -243,3 +243,6 @@ class Scope(models.Model):
     description = models.TextField()
     
     objects = managers.ScopeManager()
+
+    def __unicode__(self):
+        return "%s (%s)" % (self.full_name, self.short_name, )
