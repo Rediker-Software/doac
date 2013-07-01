@@ -10,6 +10,7 @@ Django OAuth2 Consumer (DOAC) is a reusable application that can be used to prov
  * [Utilities](utilities.md)
  * [Views](views/index.md)
 * [Settings](settings.md)
+* [Integrations](integrations.md)
 
 Requirements
 ============
@@ -19,16 +20,16 @@ We tried to make it so that this application did not require anything, but that 
 Required
 --------
 
--   Django 1.3+
--   Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
--   Python 2.6+
+- Django 1.3+
+- Django [authentication application](https://docs.djangoproject.com/en/1.5/topics/auth/)
+- Python 2.6+
 
 This application is directly compatible with other tools and applications, but if you aren't using them it shouldn't make a difference. We provide extra functionality by default if it makes sense to do so.
 
 Optional
 --------
 
--   Django [admin application](https://docs.djangoproject.com/en/1.5/ref/contrib/admin/)
+- Django [admin application](https://docs.djangoproject.com/en/1.5/ref/contrib/admin/)
 
 Getting Help
 ============
