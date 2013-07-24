@@ -44,4 +44,4 @@ class RefreshTokenNotValid(InvalidRequest):
 
 
 class ResponseTypeNotProvided(InvalidRequest):
-    reason = "The request type was not provided."
+    reason = "The response type was not provided."
