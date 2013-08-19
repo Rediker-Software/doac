@@ -1,6 +1,7 @@
 Django
 pep8
 
+djangorestframework
 pyoauth2
 oauthlib
 rauth

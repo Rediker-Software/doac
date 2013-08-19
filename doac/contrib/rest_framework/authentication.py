@@ -17,7 +17,7 @@ class DoacAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed("Invalid handler")
 
         if not hasattr(request._request, "user") or not request._request.user.is_authenticated():
-            raise exceptions.AuthenticationFailed("Could not authenticate")
+            return None
 
         if not hasattr(request._request, "access_token"):
             raise exceptions.AuthenticationFailed("Access token was not valid")
