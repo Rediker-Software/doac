@@ -6,13 +6,16 @@ from doac.models import AuthorizationToken, Client, RefreshToken, Scope
 class TestAuthorizationTokenModel(TestCase):
 
     def setUp(self):
-        self.oclient = Client(name="Test Client", access_host="http://localhost/")
+        self.oclient = Client(name="Test Client",
+            access_host="http://localhost/")
         self.oclient.save()
 
-        self.scope = Scope(short_name="test", full_name="Test Scope", description="Scope for testing")
+        self.scope = Scope(short_name="test", full_name="Test Scope",
+            description="Scope for testing")
         self.scope.save()
 
-        self.user = User(username="test", password="test", email="test@test.com")
+        self.user = User(username="test", password="test",
+            email="test@test.com")
         self.user.save()
 
         self.token = AuthorizationToken(client=self.oclient, user=self.user)
