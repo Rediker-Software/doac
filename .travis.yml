@@ -8,9 +8,13 @@ env:
   - DJANGO=Django==1.3.7
   - DJANGO=Django==1.4.5
   - DJANGO=Django==1.5
+  - DJANGO=https://github.com/django/django/tarball/stable/1.6.x
   - DJANGO=https://github.com/django/django/tarball/master
 
 matrix:
+  exclude:
+    - env: DJANGO=https://github.com/django/django/tarball/master
+      python: 2.6
   allow_failures:
     - env: DJANGO=https://github.com/django/django/tarball/master
 
@@ -26,6 +30,6 @@ before_script:
 
 script:
   - "python runtests.py --no-coverage"
-  
+
 notifications:
   email: false
