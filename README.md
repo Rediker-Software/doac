@@ -11,12 +11,12 @@ This plugin has not been tested on other configurations.  If it works with diffe
 
 ## What else does this have support for?
 - Django [admin application](https://docs.djangoproject.com/en/1.5/ref/contrib/admin/)
-- [Django Rest Framework](http://django-rest-framework.org/) - [Instructions](docs/markdown/integrations.md)
+- [Django Rest Framework](http://django-rest-framework.org/) - [Instructions](docs/integrations.md)
 
 ## Where is the documentation?
 The documentation is not complete, but we try our best to keep them current and comprehensive.
 
-They are included in this repo, primarily in markdown versions.  [You can view them here.](docs/markdown/index.md)
+They are included in this repository in markdown versions.  [You can view them here.](docs/index.md)
 
 ## Where are the tests?
 We are trying our best to keep them up to date.  Feel free to submit a pull request with tests for code that is not covered.
