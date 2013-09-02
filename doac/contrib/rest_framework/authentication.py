@@ -12,17 +12,17 @@ class DoacAuthentication(authentication.BaseAuthentication):
         from doac.middleware import AuthenticationMiddleware
 
         try:
-            response = AuthenticationMiddleware().process_request(request._request)
+            response = AuthenticationMiddleware().process_request(request)
         except:
             raise exceptions.AuthenticationFailed("Invalid handler")
 
-        if not hasattr(request._request, "user") or not request._request.user.is_authenticated():
+        if not hasattr(request, "user") or not request.user.is_authenticated():
             return None
 
-        if not hasattr(request._request, "access_token"):
+        if not hasattr(request, "access_token"):
             raise exceptions.AuthenticationFailed("Access token was not valid")
 
-        return request._request.user, request._request.access_token
+        return request.user, request.access_token
 
     def authenticate_header(self, request):
         """
