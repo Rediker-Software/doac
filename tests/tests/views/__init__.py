@@ -1,3 +1,3 @@
-from .approval import TestApprovalErrors, TestApprovalResponse
-from .authorize import TestAuthorizeErrors, TestAuthorizeResponse
-from .token import TestTokenErrors, TestTokenResponse
+from .test_approval import TestApprovalErrors, TestApprovalResponse
+from .test_authorize import TestAuthorizeErrors, TestAuthorizeResponse
+from .test_token import TestTokenErrors, TestTokenResponse

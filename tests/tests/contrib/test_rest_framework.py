@@ -37,7 +37,7 @@ if rest_framework:
 
 @unittest.skipUnless(rest_framework, 'Django Rest Framework is not installed.')
 class RestFrameworkTestCase(TokenTestCase):
-    urls = 'tests.tests.contrib.rest_framework_tests'
+    urls = 'tests.tests.contrib.test_rest_framework'
 
     def setUp(self):
         super(RestFrameworkTestCase, self).setUp()

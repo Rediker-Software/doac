@@ -1,1 +1,1 @@
-from .rest_framework_tests import RestFrameworkTestCase
+from .test_rest_framework import RestFrameworkTestCase
