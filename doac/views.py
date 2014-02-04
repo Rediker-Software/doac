@@ -1,6 +1,7 @@
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+
 from .utils import total_seconds
 from . import utils
 
@@ -62,7 +63,7 @@ class OAuthView(View):
 
     def render_exception_js(self, exception):
         """
-        Return a 200 response with the body containing a JSON-formatter version of the exception.
+        Return a response with the body containing a JSON-formatter version of the exception.
         """
 
         from .http import JsonResponse
@@ -71,7 +72,7 @@ class OAuthView(View):
         response["error"] = exception.error
         response["error_description"] = exception.reason
 
-        return JsonResponse(response)
+        return JsonResponse(response, status=getattr(exception, 'code', 400))
 
     def verify_dictionary(self, dict, *args):
         """
