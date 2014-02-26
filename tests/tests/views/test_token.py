@@ -170,3 +170,32 @@ class TestTokenResponse(TokenTestCase):
 
         self.assertEqual(request.content, json.dumps(response))
         self.assertEqual(request.status_code, 200)
+
+    def test_password(self):
+        from doac.models import RefreshToken
+
+        data = {
+            "grant_type": "password",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+            "username": self.user.username,
+            "password": "test",
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
+
+        self.assertEqual(RefreshToken.objects.count(), 1)
+
+        refresh_token = RefreshToken.objects.get()
+        access_token = refresh_token.access_tokens.get()
+
+        self.assertEqual(request.status_code, 200)
+
+        response = {
+            "token_type": "bearer",
+            "expires_in": 7199,
+            "refresh_token": refresh_token.token,
+            "access_token": access_token.token,
+        }
+
+        self.assertEqual(request.content, json.dumps(response))
