@@ -15,18 +15,19 @@ class OAuthView(View):
     """
     All views must subclass this class.
 
-    This provides common methods which are needed for validation and processing OAuth
-    requests and responses.
+    This provides common methods which are needed for validation and
+    processing OAuth requests and responses.
     """
 
     def handle_exception(self, exception):
         """
-        Handle a unspecified exception and return the correct method that should be used
-        for handling it.
+        Handle a unspecified exception and return the correct method that
+        should be used for handling it.
 
         If the exception has the `can_redirect` property set to False, it is
-        rendered to the browser.  Otherwise, it will be redirected to the location
-        provided in the `RedirectUri` object that is associated with the request.
+        rendered to the browser.  Otherwise, it will be redirected to the
+        location provided in the `RedirectUri` object that is associated with
+        the request.
         """
 
         can_redirect = getattr(exception, "can_redirect", True)
@@ -63,7 +64,8 @@ class OAuthView(View):
 
     def render_exception_js(self, exception):
         """
-        Return a response with the body containing a JSON-formatter version of the exception.
+        Return a response with the body containing a JSON-formatter version of
+        the exception.
         """
 
         from .http import JsonResponse
@@ -76,12 +78,13 @@ class OAuthView(View):
 
     def verify_dictionary(self, dict, *args):
         """
-        Based on a provided `dict`, validate all of the contents of that dictionary that are
-        provided.
+        Based on a provided `dict`, validate all of the contents of that
+        dictionary that are provided.
 
-        For each argument provided that isn't the dictionary, this will set the raw value of
-        that key as the instance variable of the same name.  It will then call the verification
-        function named `verify_[argument]` to verify the data.
+        For each argument provided that isn't the dictionary, this will set the
+        raw value of that key as the instance variable of the same name.  It
+        will then call the verification function named `verify_[argument]` to
+        verify the data.
         """
 
         for arg in args:
@@ -93,8 +96,8 @@ class OAuthView(View):
 
     def verify_client_id(self):
         """
-        Verify a provided client id against the database and set the `Client` object that is
-        associated with it to `self.client`.
+        Verify a provided client id against the database and set the `Client`
+        object that is associated with it to `self.client`.
 
         TODO: Document all of the thrown exceptions.
         """
@@ -106,7 +109,8 @@ class OAuthView(View):
         if self.client_id:
             try:
                 self.client = Client.objects.for_id(self.client_id)
-            # Catching also ValueError for the case when client_id doesn't contain an integer.
+            # Catching also ValueError for the case when client_id doesn't
+            # contain an integer.
             except (Client.DoesNotExist, ValueError):
                 raise ClientDoesNotExist()
         else:
@@ -115,7 +119,8 @@ class OAuthView(View):
     def verify_redirect_uri(self):
         from urlparse import urlparse
         from .models import RedirectUri
-        from .exceptions.invalid_request import RedirectUriDoesNotValidate, RedirectUriNotProvided
+        from .exceptions.invalid_request import RedirectUriDoesNotValidate, \
+            RedirectUriNotProvided
 
         PARSE_MATCH_ATTRIBUTES = ("scheme", "hostname", "port", )
 
@@ -133,7 +138,8 @@ class OAuthView(View):
                     raise RedirectUriDoesNotValidate()
 
             try:
-                self.redirect_uri = RedirectUri.objects.with_client(self.client).for_url(self.redirect_uri)
+                self.redirect_uri = RedirectUri.objects \
+                    .with_client(self.client).for_url(self.redirect_uri)
             except RedirectUri.DoesNotExist:
                 raise RedirectUriDoesNotValidate()
         else:
@@ -166,7 +172,8 @@ class ApprovalView(OAuthView):
         from django.http import HttpResponseRedirect
         from .models import AuthorizationToken
 
-        self.authorization_token = AuthorizationToken(user=self.request.user, client=self.client)
+        self.authorization_token = AuthorizationToken(user=self.request.user,
+                                                      client=self.client)
         self.authorization_token.save()
 
         self.authorization_token.scope = self.scopes
@@ -177,11 +184,14 @@ class ApprovalView(OAuthView):
         else:
             separator = "#"
 
-            self.access_token = self.authorization_token.generate_refresh_token().generate_access_token()
+            self.access_token = self.authorization_token \
+                                    .generate_refresh_token() \
+                                    .generate_access_token()
 
         query_string = self.generate_query_string()
 
-        return HttpResponseRedirect(self.redirect_uri.url + separator + query_string)
+        return HttpResponseRedirect(self.redirect_uri.url + separator +
+                                    query_string)
 
     def authorization_denied(self):
         from .exceptions.access_denied import AuthorizationDenied
@@ -203,7 +213,8 @@ class ApprovalView(OAuthView):
 
     def verify_code(self):
         from .models import AuthorizationCode
-        from .exceptions.invalid_request import AuthorizationCodeNotValid, AuthorizationCodeNotProvided
+        from .exceptions.invalid_request import AuthorizationCodeNotValid, \
+            AuthorizationCodeNotProvided
 
         if self.code:
             get_code = self.request.GET.get("code", None)
@@ -212,7 +223,8 @@ class ApprovalView(OAuthView):
                 raise AuthorizationCodeNotValid()
 
             try:
-                self.authorization_code = AuthorizationCode.objects.for_token(self.code)
+                self.authorization_code = AuthorizationCode.objects \
+                    .for_token(self.code)
             except AuthorizationCode.DoesNotExist:
                 raise AuthorizationCodeNotValid()
         else:
@@ -231,7 +243,8 @@ class AuthorizeView(OAuthView):
         self.state = request.GET.get("state", "o2cs")
 
         try:
-            self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
+            self.verify_dictionary(request.GET, "client_id", "redirect_uri",
+                                   "scope", "response_type")
         except Exception, e:
             return self.handle_exception(e)
 
@@ -253,7 +266,9 @@ class AuthorizeView(OAuthView):
     def generate_authorization_code(self):
         from .models import AuthorizationCode
 
-        code = AuthorizationCode(client=self.client, redirect_uri=self.redirect_uri, response_type=self.response_type)
+        code = AuthorizationCode(client=self.client,
+                                 redirect_uri=self.redirect_uri,
+                                 response_type=self.response_type)
         code.save()
 
         code.scope = self.scopes
@@ -300,7 +315,8 @@ class TokenView(OAuthView):
 
     def post(self, request, *args, **kwargs):
         try:
-            self.verify_dictionary(request.POST, "grant_type", "client_id", "client_secret")
+            self.verify_dictionary(request.POST, "grant_type", "client_id",
+                                   "client_secret")
         except Exception, e:
             return self.render_exception_js(e)
 
@@ -310,7 +326,8 @@ class TokenView(OAuthView):
             except Exception, e:
                 return self.render_exception_js(e)
 
-            self.refresh_token = self.authorization_token.generate_refresh_token()
+            self.refresh_token = self.authorization_token \
+                                     .generate_refresh_token()
 
             if not self.refresh_token:
                 self.authorization_token.revoke_tokens()
@@ -367,12 +384,14 @@ class TokenView(OAuthView):
             raise ClientSecretNotProvided()
 
     def verify_code(self):
-        from .exceptions.invalid_request import AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, AuthorizationCodeNotValid
+        from .exceptions.invalid_request import AuthorizationCodeAlreadyUsed, \
+            AuthorizationCodeNotProvided, AuthorizationCodeNotValid
         from .models import AuthorizationToken
 
         if self.code:
             try:
-                self.authorization_token = AuthorizationToken.objects.with_client(self.client).for_token(self.code)
+                self.authorization_token = AuthorizationToken.objects \
+                    .with_client(self.client).for_token(self.code)
 
                 if not self.authorization_token.is_active:
                     self.authorization_token.revoke_tokens()
@@ -384,7 +403,8 @@ class TokenView(OAuthView):
             raise AuthorizationCodeNotProvided()
 
     def verify_grant_type(self):
-        from .exceptions.unsupported_grant_type import GrantTypeNotProvided, GrantTypeNotValid
+        from .exceptions.unsupported_grant_type import GrantTypeNotProvided, \
+            GrantTypeNotValid
 
         self.grant_type = self.request.POST.get("grant_type", None)
 
@@ -395,12 +415,14 @@ class TokenView(OAuthView):
             raise GrantTypeNotProvided()
 
     def verify_refresh_token(self):
-        from .exceptions.invalid_request import RefreshTokenNotProvided, RefreshTokenNotValid
+        from .exceptions.invalid_request import RefreshTokenNotProvided, \
+            RefreshTokenNotValid
         from .models import RefreshToken
 
         if self.refresh_token:
             try:
-                self.refresh_token = RefreshToken.objects.with_client(self.client).for_token(self.refresh_token)
+                self.refresh_token = RefreshToken.objects \
+                    .with_client(self.client).for_token(self.refresh_token)
             except RefreshToken.DoesNotExist:
                 raise RefreshTokenNotValid()
         else:
