@@ -12,68 +12,116 @@ class TestTokenErrors(TokenTestCase):
         from doac.exceptions.unsupported_grant_type import \
             GrantTypeNotProvided, GrantTypeNotValid
 
-        request = self.client.post(reverse("oauth2_token"))
+        data = {}
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, GrantTypeNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": ""})
+        data["grant_type"] = ""
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, GrantTypeNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "invalid"})
+        data["grant_type"] = "invalid"
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, GrantTypeNotValid())
 
     def test_client_id(self):
         from doac.exceptions.invalid_request import ClientNotProvided
         from doac.exceptions.invalid_client import ClientDoesNotExist
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code"})
+        data = {
+            "grant_type": "authorization_code",
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": ""})
+        data["client_id"] = ""
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": 1234})
+        data["client_id"] = "1234"
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientDoesNotExist())
 
     def test_client_secret(self):
         from doac.exceptions.invalid_client import ClientSecretNotValid
         from doac.exceptions.invalid_request import ClientSecretNotProvided
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id})
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": self.oauth_client.id,
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientSecretNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": ""})
+        data["client_secret"] = ""
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientSecretNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": "notVerySecret"})
+        data["client_secret"] = "notVerySecret"
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, ClientSecretNotValid())
 
     def test_code(self):
-        from doac.exceptions.invalid_request import AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, AuthorizationCodeNotValid
+        from doac.exceptions.invalid_request import \
+            AuthorizationCodeAlreadyUsed, AuthorizationCodeNotProvided, \
+            AuthorizationCodeNotValid
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret})
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, AuthorizationCodeNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": ""})
+        data["code"] = ""
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, AuthorizationCodeNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": "invalid"})
+        data["code"] = "invalid"
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, AuthorizationCodeNotValid())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "authorization_code", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "code": self.authorization_token.token})
+        data["code"] = self.authorization_token.token
+
+        request = self.client.post(reverse("oauth2_token"), data)
+        request = self.client.post(reverse("oauth2_token"), data)
+
         self.assertExceptionJson(request, AuthorizationCodeAlreadyUsed())
 
     def test_refresh_token(self):
         from doac.exceptions.invalid_request import \
             RefreshTokenNotProvided, RefreshTokenNotValid
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret})
+        data = {
+            "grant_type": "refresh_token",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, RefreshTokenNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "refresh_token": ""})
+        data["refresh_token"] = ""
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, RefreshTokenNotProvided())
 
-        request = self.client.post(reverse("oauth2_token"), {"grant_type": "refresh_token", "client_id": self.oauth_client.id, "client_secret": self.client_secret, "refresh_token": "invalid"})
+        data["refresh_token"] = "invalid"
+
+        request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, RefreshTokenNotValid())
 
 
@@ -89,11 +137,14 @@ class TestTokenResponse(TokenTestCase):
 
         request = self.client.post(reverse("oauth2_token"), data)
 
+        refresh_token = self.authorization_token.refresh_token
+        access_token = refresh_token.access_tokens.all()[0]
+
         response = {
-            "refresh_token": self.authorization_token.refresh_token.token,
+            "refresh_token": refresh_token.token,
             "token_type": "bearer",
             "expires_in": 5183999,
-            "access_token": self.authorization_token.refresh_token.access_tokens.all()[0].token,
+            "access_token": access_token.token,
         }
 
         self.assertEqual(request.content, json.dumps(response))
