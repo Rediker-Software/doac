@@ -192,10 +192,10 @@ class TestTokenResponse(TokenTestCase):
         self.assertEqual(request.status_code, 200)
 
         response = {
+            "access_token": access_token.token,
             "token_type": "bearer",
             "expires_in": 7199,
             "refresh_token": refresh_token.token,
-            "access_token": access_token.token,
         }
 
         self.assertEqual(request.content, json.dumps(response))

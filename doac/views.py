@@ -8,7 +8,7 @@ from . import utils
 
 ALLOWED_RESPONSE_TYPES = ("code", "token", )
 
-ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", )
+ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", "password", )
 
 
 class OAuthView(View):
@@ -346,6 +346,15 @@ class TokenView(OAuthView):
 
             return self.render_refresh_token()
 
+        elif self.grant_type == "password":
+            try:
+                self.verify_dictionary(request.POST, "scope")
+                self.verify_user()
+            except Exception, e:
+                return self.render_exception_js(e)
+
+            return self.render_password()
+
     def render_authorization_token(self):
         from .compat import now
         from .http import JsonResponse
@@ -370,6 +379,29 @@ class TokenView(OAuthView):
         response["token_type"] = "bearer"
         response["expires_in"] = int(total_seconds(remaining))
         response["access_token"] = self.access_token.token
+
+        return JsonResponse(response)
+
+    def render_password(self):
+        from doac.compat import now
+        from doac.http import JsonResponse
+        from doac.models import AuthorizationToken
+
+        self.authorization_token = AuthorizationToken(user=self.user,
+                                                      client=self.client)
+        self.authorization_token.save()
+
+        self.refresh_token = self.authorization_token.generate_refresh_token()
+        self.access_token = self.refresh_token.generate_access_token()
+
+        remaining = self.access_token.expires_at - now()
+
+        response = {
+            "access_token": self.access_token.token,
+            "token_type": "bearer",
+            "expires_in": int(total_seconds(remaining)),
+            "refresh_token": self.refresh_token.token,
+        }
 
         return JsonResponse(response)
 
@@ -427,3 +459,17 @@ class TokenView(OAuthView):
                 raise RefreshTokenNotValid()
         else:
             raise RefreshTokenNotProvided()
+
+    def verify_user(self):
+        from django.contrib.auth import authenticate
+
+        username = self.request.POST.get("username", None)
+        password = self.request.POST.get("password", None)
+
+        if not username or not password:
+            raise CouldNotAuthenticate()
+
+        self.user = authenticate(username=username, password=password)
+
+        if not self.user or not self.user.is_active:
+            raise CouldNotAuthenticate()
