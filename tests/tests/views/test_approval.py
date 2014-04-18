@@ -92,6 +92,6 @@ class TestApprovalResponse(ApprovalTestCase):
         
         args = {
             "state": "o2cs",
-            "code": AccessToken.objects.all()[0].token,
+            "access_token": AccessToken.objects.all()[0].token,
         }
         self.assertRedirects(request, self.redirect_uri.url + "#" + urllib.urlencode(args))
