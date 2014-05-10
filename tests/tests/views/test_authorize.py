@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
-from doac.models import AuthorizationCode, AuthorizationToken, Client, \
-    RedirectUri, Scope
+from doac.models import AccessToken, AuthorizationCode, AuthorizationToken, \
+    Client, RedirectUri, RefreshToken, Scope
 from ..test_cases import AuthorizeTestCase
 
 
@@ -63,12 +63,13 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         self.assertExceptionRedirect(request, ResponseTypeNotValid())
 
     def test_approval_prompt(self):
-        from doac.exceptions.invalid_request import ApprovalPromptInvalid
+        from doac.exceptions.invalid_request import ApprovalPromptNotValid
 
-        auth_url = reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&approval_prompt=invalid"
+        auth_url = reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&response_type=code&approval_prompt=invalid" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, )
 
         request = self.client.get(auth_url)
-        self.assertExceptionRedirect(request, ApprovalPromptInvalid())
+
+        self.assertExceptionRedirect(request, ApprovalPromptNotValid())
 
 
 class TestAuthorizeResponse(AuthorizeTestCase):
@@ -136,6 +137,7 @@ class TestAuthorizeResponse(AuthorizeTestCase):
 
         auth_url = (reverse("oauth2_authorize") +
                     "?client_id=%s&redirect_uri=%s&scope=%s" +
+                    "&approval_prompt=auto" +
                     "&response_type=code") % (self.oauth_client.id,
                                               self.redirect_uri.url,
                                               self.scope.short_name)
@@ -144,5 +146,6 @@ class TestAuthorizeResponse(AuthorizeTestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        self.assertEqual(RefreshToken.objects.count(), 2)
-        self.assertEqual(AccessToken.objects.count(), 2)
+        self.assertEqual(AuthorizationToken.objects.count(), 2)
+        self.assertEqual(RefreshToken.objects.count(), 1)
+        self.assertEqual(AccessToken.objects.count(), 1)

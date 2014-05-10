@@ -10,6 +10,8 @@ ALLOWED_RESPONSE_TYPES = ("code", "token", )
 
 ALLOWED_GRANT_TYPES = ("authorization_code", "refresh_token", )
 
+ALLOWED_APPROVAL_PROMPTS = ("auto", "force", )
+
 
 class OAuthView(View):
     """
@@ -231,7 +233,8 @@ class AuthorizeView(OAuthView):
         self.state = request.GET.get("state", "o2cs")
 
         try:
-            self.verify_dictionary(request.GET, "client_id", "redirect_uri", "scope", "response_type")
+            self.verify_dictionary(request.GET, "client_id", "redirect_uri",
+                                   "scope", "response_type", "approval_prompt")
         except Exception, e:
             return self.handle_exception(e)
 
@@ -239,6 +242,19 @@ class AuthorizeView(OAuthView):
             return redirect_to_login(request.get_full_path())
 
         code = self.generate_authorization_code()
+
+        if self.approval_prompt == "auto":
+            view = ApprovalView()
+
+            view.request = self.request
+
+            view.authorization_code = code
+            view.client = self.client
+            view.scopes = code.scope.all()
+            view.state = self.state
+            view.redirect_uri = self.redirect_uri
+
+            return view.authorization_accepted()
 
         context = {
             "authorization_code": code,
@@ -260,6 +276,40 @@ class AuthorizeView(OAuthView):
         code.save()
 
         return code
+
+    def verify_approval_prompt(self):
+        from doac.compat import now
+        from doac.conf import options
+        from doac.exceptions.invalid_request import ApprovalPromptNotValid
+        from doac.models import AccessToken, AuthorizationToken
+
+        if not self.approval_prompt:
+            self.approval_prompt = options.approval_prompt
+
+        if self.approval_prompt not in ALLOWED_APPROVAL_PROMPTS:
+            raise ApprovalPromptNotValid()
+
+        if self.approval_prompt == "auto":
+            tokens = AccessToken.objects.with_client(self.client) \
+                                        .with_user(self.request.user) \
+                                        .is_active() \
+                                        .with_expiration_after(now())
+
+            requested_scopes = set(scope.short_name for scope in self.scopes)
+
+            self.approval_type = "force"
+
+            for token in tokens:
+                scopes = set(token.scope.values_list("short_name", flat=True))
+
+                missing_scopes = requested_scopes - scopes
+
+                if missing_scopes:
+                    continue
+
+                self.approval_type = "auto"
+
+                break
 
     def verify_response_type(self):
         from .exceptions.unsupported_response_type import ResponseTypeNotValid

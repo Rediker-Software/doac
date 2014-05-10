@@ -1,6 +1,10 @@
 from .base import InvalidRequest
 
 
+class ApprovalPromptNotValid(InvalidRequest):
+    reason = "The approval prompt paramter was malformed or invalid."
+
+
 class AuthorizationCodeAlreadyUsed(InvalidRequest):
     reason = "The authorization code was already used to get a refresh token."
 
