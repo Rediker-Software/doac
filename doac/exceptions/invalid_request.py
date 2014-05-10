@@ -13,6 +13,14 @@ class AuthorizationCodeNotValid(InvalidRequest):
     reason = "The authorization code was malformed or invalid."
 
 
+class ClientCredentialsNotProvided(InvalidRequest):
+    reason = "The client credentials were not provided."
+
+
+class ClientCredentialsNotValid(InvalidRequest):
+    reason = "The client credentials were malformed or invalid."
+
+
 class ClientNotProvided(InvalidRequest):
     reason = "The client was not provided."
 

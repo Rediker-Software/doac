@@ -462,14 +462,16 @@ class TokenView(OAuthView):
 
     def verify_user(self):
         from django.contrib.auth import authenticate
+        from doac.exceptions.invalid_request import \
+            ClientCredentialsNotProvided, ClientCredentialsNotValid
 
         username = self.request.POST.get("username", None)
         password = self.request.POST.get("password", None)
 
         if not username or not password:
-            raise CouldNotAuthenticate()
+            raise ClientCredentialsNotProvided()
 
         self.user = authenticate(username=username, password=password)
 
         if not self.user or not self.user.is_active:
-            raise CouldNotAuthenticate()
+            raise ClientCredentialsNotValid()

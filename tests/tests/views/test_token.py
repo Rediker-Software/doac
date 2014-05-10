@@ -124,6 +124,29 @@ class TestTokenErrors(TokenTestCase):
         request = self.client.post(reverse("oauth2_token"), data)
         self.assertExceptionJson(request, RefreshTokenNotValid())
 
+    def test_password_authentication(self):
+        from doac.exceptions.invalid_request import \
+            ClientCredentialsNotProvided, ClientCredentialsNotValid
+
+        data = {
+            "grant_type": "password",
+            "client_id": self.oauth_client.id,
+            "client_secret": self.client_secret,
+        }
+
+        request = self.client.post(reverse("oauth2_token"), data)
+        self.assertExceptionJson(request, ClientCredentialsNotProvided())
+
+        data["username"] = self.user.username
+
+        request = self.client.post(reverse("oauth2_token"), data)
+        self.assertExceptionJson(request, ClientCredentialsNotProvided())
+
+        data["password"] = "not valid"
+
+        request = self.client.post(reverse("oauth2_token"), data)
+        self.assertExceptionJson(request, ClientCredentialsNotValid())
+
 
 class TestTokenResponse(TokenTestCase):
 
