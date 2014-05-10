@@ -13,6 +13,7 @@ class Settings:
             )
 
         self.realm = options.get("REALM", "oauth")
+        self.approval_prompt = options.get("APPROVAL_PROMPT", "force")
 
         self.access_token = options.get("ACCESS_TOKEN", {})
         self.setup_access_token()

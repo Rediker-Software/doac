@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
-from doac.models import AuthorizationCode, Client, RedirectUri, Scope
+from doac.models import AuthorizationCode, AuthorizationToken, Client, \
+    RedirectUri, Scope
 from ..test_cases import AuthorizeTestCase
 
 
@@ -61,6 +62,14 @@ class TestAuthorizeErrors(AuthorizeTestCase):
         request = self.client.get(reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&response_type=invalid" % (self.oauth_client.id, self.redirect_uri.url, self.scope.short_name, ))
         self.assertExceptionRedirect(request, ResponseTypeNotValid())
 
+    def test_approval_prompt(self):
+        from doac.exceptions.invalid_request import ApprovalPromptInvalid
+
+        auth_url = reverse("oauth2_authorize") + "?client_id=%s&redirect_uri=%s&scope=%s&approval_prompt=invalid"
+
+        request = self.client.get(auth_url)
+        self.assertExceptionRedirect(request, ApprovalPromptInvalid())
+
 
 class TestAuthorizeResponse(AuthorizeTestCase):
 
@@ -85,3 +94,55 @@ class TestAuthorizeResponse(AuthorizeTestCase):
             self.assertEqual(request.context["state"], "o2cs")
 
         self.assertEqual(AuthorizationCode.objects.count(), 2)
+
+    def test_approval_prompt_forced_default(self):
+        self.client.login(username="test", password="test")
+
+        auth_url = (reverse("oauth2_authorize") +
+                    "?client_id=%s&redirect_uri=%s&scope=%s" +
+                    "&response_type=code") % (self.oauth_client.id,
+                                              self.redirect_uri.url,
+                                              self.scope.short_name)
+
+        response = self.client.get(auth_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_approval_prompt_auto_without_previous(self):
+        self.client.login(username="test", password="test")
+
+        auth_url = (reverse("oauth2_authorize") +
+                    "?client_id=%s&redirect_uri=%s&scope=%s" +
+                    "&response_type=code") % (self.oauth_client.id,
+                                              self.redirect_uri.url,
+                                              self.scope.short_name)
+
+        response = self.client.get(auth_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_approval_prompt_auto_with_previous(self):
+        self.client.login(username="test", password="test")
+
+        code = AuthorizationToken(client=self.oauth_client,
+                                  user=self.user)
+        code.save()
+
+        code.scope.add(self.scope)
+        code.save()
+
+        refresh_token = code.generate_refresh_token()
+        access_token = refresh_token.generate_access_token()
+
+        auth_url = (reverse("oauth2_authorize") +
+                    "?client_id=%s&redirect_uri=%s&scope=%s" +
+                    "&response_type=code") % (self.oauth_client.id,
+                                              self.redirect_uri.url,
+                                              self.scope.short_name)
+
+        response = self.client.get(auth_url)
+
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(RefreshToken.objects.count(), 2)
+        self.assertEqual(AccessToken.objects.count(), 2)
